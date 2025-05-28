@@ -1,6 +1,8 @@
 # src/game_core/unit_states.py
 import pygame
-from .commands import MoveUnitCommand, AttackCommand  # AttackCommand'ı ekledik
+from .commands import MoveUnitCommand, AttackCommand
+
+PLAYER_HUMAN_ID = 1  # game.py'daki ile aynı olmalı
 
 
 class UnitState:
@@ -8,9 +10,11 @@ class UnitState:
         self.unit = unit
 
     def enter_state(self):
+        # print(f"{self.unit} entering {self.__class__.__name__}")
         pass
 
     def exit_state(self):
+        # print(f"{self.unit} exiting {self.__class__.__name__}")
         pass
 
     def handle_click(self, game_instance, clicked_tile):
@@ -25,13 +29,15 @@ class IdleState(UnitState):
         super().__init__(unit)
 
     def handle_click(self, game_instance, clicked_tile):
-        if not self.unit.is_alive(): return  # Ölü birim seçilemez
+        if not self.unit.is_alive(): return
 
-        if clicked_tile and clicked_tile.unit_on_tile == self.unit:
-            self.unit.set_state(SelectedState(self.unit))
-            game_instance.selected_unit = self.unit
-            game_instance.highlight_movable_tiles(self.unit)
-            game_instance.highlight_attackable_tiles(self.unit)  # Saldırılabilecekleri de vurgula
+        # Sadece mevcut insan oyuncu kendi birimini seçebilir
+        if game_instance.current_player_id == PLAYER_HUMAN_ID and self.unit.player_id == PLAYER_HUMAN_ID:
+            if clicked_tile and clicked_tile.unit_on_tile == self.unit:
+                self.unit.set_state(SelectedState(self.unit))
+                game_instance.selected_unit = self.unit
+                game_instance.highlight_movable_tiles(self.unit)
+                game_instance.highlight_attackable_tiles(self.unit)
 
 
 class SelectedState(UnitState):
@@ -40,17 +46,21 @@ class SelectedState(UnitState):
 
     def enter_state(self):
         super().enter_state()
-        self.unit.is_graphically_selected = True
+        if self.unit.player_id == PLAYER_HUMAN_ID:  # Sadece insan oyuncunun seçimi görselleşsin
+            self.unit.is_graphically_selected = True
 
     def exit_state(self):
         super().exit_state()
         self.unit.is_graphically_selected = False
-        # game_instance.clear_highlighted_tiles() # Game'e taşıdık
+        # game_instance.clear_all_highlights() # Bu, game_instance.selected_unit = None sonrası yapılmalı
 
     def handle_click(self, game_instance, clicked_tile):
-        if not self.unit.is_alive():  # Seçili birim öldüyse bir şey yapma
+        if not self.unit.is_alive() or self.unit.player_id != PLAYER_HUMAN_ID:  # Sadece canlı ve insan oyuncunun birimi eylem yapabilir
             game_instance.clear_all_highlights()
-            game_instance.selected_unit = None
+            if game_instance.selected_unit == self.unit:
+                game_instance.selected_unit = None
+            if self.unit.player_id == PLAYER_HUMAN_ID:  # Kendi state'ini Idle yap
+                self.unit.set_state(IdleState(self.unit))
             return
 
         if not clicked_tile:
@@ -60,49 +70,37 @@ class SelectedState(UnitState):
                 game_instance.selected_unit = None
             return
 
-        # 1. Kendi üzerine tekrar tıklanırsa: Seçimi kaldır
         if clicked_tile.unit_on_tile == self.unit:
             game_instance.clear_all_highlights()
             self.unit.set_state(IdleState(self.unit))
             game_instance.selected_unit = None
 
-        # 2. Boş ve yürünebilir bir hücreye tıklanırsa: Hareket et
-        elif clicked_tile.is_walkable and not clicked_tile.unit_on_tile:
-            distance = abs(clicked_tile.x_grid - self.unit.grid_x) + abs(clicked_tile.y_grid - self.unit.grid_y)
-            if distance <= self.unit.movement_range:
+        elif clicked_tile.is_walkable and not clicked_tile.unit_on_tile:  # Hareket
+            # Menzil içindeki tile'lar zaten Game'de highlight_movable_tiles ile belirleniyor
+            # Bu tile onlardan biri mi diye kontrol etmek daha doğru olur.
+            if clicked_tile in game_instance.highlighted_tiles_for_move:  # Vurgulananlardan biri mi?
                 move_command = MoveUnitCommand(self.unit, clicked_tile.x_grid, clicked_tile.y_grid,
                                                game_instance.game_map)
                 if game_instance.execute_command(move_command):
-                    game_instance.clear_all_highlights()
-                    self.unit.set_state(IdleState(self.unit))
-                    game_instance.selected_unit = None
+                    # game_instance.clear_all_highlights() # execute_command sonrası Game'de yönetiliyor
+                    # self.unit.set_state(IdleState(self.unit))
+                    # game_instance.selected_unit = None
+                    # Bu kısım execute_command sonrası game'de selected_unit'in durumuna göre yönetilmeli
+                    # Eğer komut başarılıysa, birim zaten Idle'a dönecek şekilde execute_command sonrası ayarlanmalı
+                    # Ya da komutun kendisi bir sonraki state'i belirleyebilir. Şimdilik Game hallediyor.
+                    pass  # Game execute_command sonrası seçimi ve state'i yönetiyor
             else:
-                print(f"Target tile for movement out of range for {self.unit.unit_type}.")
+                print(f"Target tile for movement out of range or invalid for {self.unit.unit_type}.")
 
-        # 3. Başka bir birimin olduğu hücreye tıklanırsa: Saldır
-        elif clicked_tile.unit_on_tile and clicked_tile.unit_on_tile != self.unit:
+        elif clicked_tile.unit_on_tile and clicked_tile.unit_on_tile.player_id != self.unit.player_id:  # Saldırı
             target_unit = clicked_tile.unit_on_tile
-            # Saldırı menzil kontrolü
-            attack_distance = abs(target_unit.grid_x - self.unit.grid_x) + abs(target_unit.grid_y - self.unit.grid_y)
-            if attack_distance <= self.unit.attack_range:
+            if clicked_tile in game_instance.highlighted_tiles_for_attack:  # Vurgulananlardan biri mi?
                 attack_command = AttackCommand(self.unit, target_unit, game_instance.game_map)
-                if game_instance.execute_command(attack_command):
-                    game_instance.clear_all_highlights()
-                    # Saldırı sonrası birim ya Idle'a döner ya da bir "ActionCompletedState" eklenebilir.
-                    # Şimdilik Idle'a dönsün.
-                    self.unit.set_state(IdleState(self.unit))
-                    game_instance.selected_unit = None
-                    # Eğer hedef öldüyse ve seçili olan hedef idiyse, seçimi temizle
-                    if not target_unit.is_alive() and game_instance.selected_unit == target_unit:
-                        game_instance.selected_unit = None  # Bu zaten yukarıda yapılıyor
+                game_instance.execute_command(attack_command)
             else:
-                print(f"Target unit for attack out of range for {self.unit.unit_type}.")
-                # Menzil dışıysa, şimdilik seçimi iptal et ve Idle'a dön
-                game_instance.clear_all_highlights()
-                self.unit.set_state(IdleState(self.unit))
-                game_instance.selected_unit = None
-        else:  # Diğer durumlar (örn: yürünemez boş bir tile'a tıklama)
-            print("Invalid action or target. Deselecting.")
+                print(f"Target unit for attack out of range or invalid for {self.unit.unit_type}.")
+        else:
+            print("Invalid action or target on selected unit. Deselecting.")
             game_instance.clear_all_highlights()
             self.unit.set_state(IdleState(self.unit))
             game_instance.selected_unit = None

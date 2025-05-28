@@ -1,13 +1,14 @@
 # src/game_core/unit.py
 import pygame
-from .unit_states import IdleState  # unit_states'i import etmeye devam ediyoruz
+from .unit_states import IdleState
 
 
 class Unit:
-    def __init__(self, grid_x, grid_y, unit_type, color=(0, 0, 255), size=30):
+    def __init__(self, grid_x, grid_y, unit_type, player_id, color=(0, 0, 255), size=30):  # player_id eklendi
         self.grid_x = grid_x
         self.grid_y = grid_y
         self.unit_type = unit_type
+        self.player_id = player_id  # 1: Human, 2: AI gibi
         self.color = color
         self.size = size
         self.pixel_x = 0
@@ -15,15 +16,14 @@ class Unit:
         self.rect = None
         self.is_graphically_selected = False
 
-        # Saldırı ve Savunma Nitelikleri
         self.max_health = 100
         self.health = self.max_health
         self.attack_power = 10
-        self.attack_range = 1  # Yakın dövüş için (bitişik kareler)
-        self.movement_range = 0  # Alt sınıflar belirleyecek
+        self.attack_range = 1
+        self.movement_range = 0
 
         self.current_state = IdleState(self)
-        self.current_state.enter_state()
+        # self.current_state.enter_state() # IdleState __init__'i içinde yapılabilir veya Unit __init__'te çağrılır
 
     def set_state(self, new_state):
         if self.current_state:
@@ -32,6 +32,7 @@ class Unit:
         self.current_state.enter_state()
 
     def handle_click(self, game_instance, clicked_tile):
+        # Sadece mevcut oyuncunun birimleri tıklanabilir olmalı (Game sınıfında kontrol edilecek)
         self.current_state.handle_click(game_instance, clicked_tile)
 
     def update(self, dt):
@@ -44,27 +45,26 @@ class Unit:
         self.rect = pygame.Rect(self.pixel_x, self.pixel_y, self.size, self.size)
 
     def draw(self, surface):
-        if not self.is_alive():  # Eğer birim canlı değilse çizme
+        if not self.is_alive():
             return
 
         if self.rect:
             current_color = self.color
             pygame.draw.rect(surface, current_color, self.rect)
 
-            # Can barı çizimi (basit)
             if self.health < self.max_health:
                 bar_width = self.size * (self.health / self.max_health)
-                health_bar_rect = pygame.Rect(self.pixel_x, self.pixel_y - 7, self.size, 5)  # Can barı konumu
+                health_bar_rect = pygame.Rect(self.pixel_x, self.pixel_y - 7, self.size, 5)
                 red_bar_rect = pygame.Rect(self.pixel_x, self.pixel_y - 7, bar_width, 5)
-                pygame.draw.rect(surface, (255, 0, 0), health_bar_rect)  # Arka plan kırmızı
-                pygame.draw.rect(surface, (0, 255, 0), red_bar_rect)  # Ön plan yeşil
+                pygame.draw.rect(surface, (255, 0, 0), health_bar_rect)
+                pygame.draw.rect(surface, (0, 255, 0), red_bar_rect)
 
             if self.is_graphically_selected:
-                pygame.draw.rect(surface, (255, 255, 0), self.rect, 3)  # Kenarlık kalınlığı 3
+                pygame.draw.rect(surface, (255, 255, 0), self.rect, 3)
 
     def get_tiles_in_movement_range(self, game_map):
         in_range_tiles = []
-        if not self.is_alive(): return in_range_tiles  # Ölü birim hareket edemez
+        if not self.is_alive(): return in_range_tiles
 
         for r_offset in range(-self.movement_range, self.movement_range + 1):
             for c_offset in range(-self.movement_range, self.movement_range + 1):
@@ -80,13 +80,11 @@ class Unit:
         return in_range_tiles
 
     def get_tiles_in_attack_range(self, game_map):
-        """Saldırı menzilindeki tile'ları ve üzerindeki düşman birimleri döndürür."""
-        in_range_attack_options = []  # (tile, unit_on_tile) tuple'ları
-        if not self.is_alive(): return in_range_attack_options
+        in_range_attack_tiles = []  # Sadece tile'ları döndürsün
+        if not self.is_alive(): return in_range_attack_tiles
 
         for r_offset in range(-self.attack_range, self.attack_range + 1):
             for c_offset in range(-self.attack_range, self.attack_range + 1):
-                # Kendine saldıramaz
                 if r_offset == 0 and c_offset == 0:
                     continue
 
@@ -98,14 +96,14 @@ class Unit:
                 check_y = self.grid_y + r_offset
 
                 tile = game_map.get_tile_at_grid_coords(check_x, check_y)
-                # Şimdilik tüm diğer birimler düşman kabul ediliyor. Takım sistemi eklenebilir.
-                if tile and tile.unit_on_tile and tile.unit_on_tile != self:
-                    in_range_attack_options.append(tile)  # Sadece tile'ı döndürelim, state içinde birim alınır
-        return in_range_attack_options
+                # Sadece üzerinde DÜŞMAN birim olan tile'ları döndür.
+                if tile and tile.unit_on_tile and tile.unit_on_tile.player_id != self.player_id:
+                    in_range_attack_tiles.append(tile)
+        return in_range_attack_tiles
 
     def take_damage(self, amount):
         self.health -= amount
-        print(f"{self.unit_type} took {amount} damage, health is now {self.health}")
+        print(f"Player {self.player_id}'s {self.unit_type} took {amount} damage, health is now {self.health}")
         if self.health <= 0:
             self.health = 0
             self.die()
@@ -114,20 +112,18 @@ class Unit:
         return self.health > 0
 
     def die(self):
-        # Ölme animasyonu veya efekti burada tetiklenebilir.
-        # Şimdilik sadece konsola yazdıralım.
-        print(f"{self.unit_type} at ({self.grid_x}, {self.grid_y}) has died!")
-        # Haritadan kaldırılma işini Game veya Map sınıfı yapacak.
+        print(f"Player {self.player_id}'s {self.unit_type} at ({self.grid_x}, {self.grid_y}) has died!")
 
     def __str__(self):
-        return f"{self.unit_type} ({self.health}HP) at ({self.grid_x}, {self.grid_y}) in state {self.current_state.__class__.__name__}"
+        return f"P{self.player_id} {self.unit_type} ({self.health}HP) at ({self.grid_x}, {self.grid_y}) in state {self.current_state.__class__.__name__}"
 
 
 class Piyade(Unit):
-    def __init__(self, grid_x, grid_y):
-        super().__init__(grid_x, grid_y, "Piyade", color=(50, 150, 50))
-        self.max_health = 100  # Piyade'ye özel can
+    def __init__(self, grid_x, grid_y, player_id):  # player_id eklendi
+        super().__init__(grid_x, grid_y, "Piyade", player_id,
+                         color=(50, 150, 50) if player_id == 1 else (150, 50, 50))  # Renk oyuncuya göre
+        self.max_health = 100
         self.health = self.max_health
-        self.attack_power = 25  # Piyade'nin saldırı gücü
+        self.attack_power = 30  # Biraz arttıralım ki bir şeyler olsun :)
         self.movement_range = 3
-        self.attack_range = 1  # Yakın dövüş
+        self.attack_range = 1
