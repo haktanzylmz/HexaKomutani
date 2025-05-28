@@ -2,19 +2,17 @@
 from .tile import Tile
 
 
-# UnitFactory'i veya Unit'i doğrudan import etmeye gerek yok, Game sınıfı yönetecek
-
 class Map:
     def __init__(self, rows, cols, tile_size):
         self.rows = rows
         self.cols = cols
         self.tile_size = tile_size
-        self.grid = []  # Hücreleri (Tile nesneleri) tutacak 2D liste
-        self.units = []  # Oyundaki tüm birimleri tutacak liste
+        self.grid = []
+        self.units = []
         self.create_grid()
 
     def create_grid(self):
-        self.grid = []  # Yeniden oluştururken listeyi temizle
+        self.grid = []
         for row_idx in range(self.rows):
             self.grid.append([])
             for col_idx in range(self.cols):
@@ -40,6 +38,8 @@ class Map:
             tile.set_unit(unit)
             unit.grid_x = grid_x
             unit.grid_y = grid_y
+            # Birimin piksel pozisyonunu tile'a göre ayarla
+            unit.set_pixel_pos(tile.pixel_x, tile.pixel_y, self.tile_size)
             self.units.append(unit)
             return True
         return False
@@ -52,18 +52,16 @@ class Map:
             if old_tile:
                 old_tile.remove_unit()
 
-            new_tile.set_unit(unit)
+            new_tile.set_unit(unit)  # Bu zaten unit.set_pixel_pos çağırıyor
             unit.grid_x = new_grid_x
             unit.grid_y = new_grid_y
             return True
         return False
 
     def draw(self, surface):
-        # Önce haritayı çiz
         for row in self.grid:
             for tile in row:
                 tile.draw(surface)
 
-        # Sonra birimleri çiz (haritanın üzerine)
         for unit in self.units:
             unit.draw(surface)
