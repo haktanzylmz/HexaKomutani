@@ -8,7 +8,7 @@ class Map:
         self.cols = cols
         self.tile_size = tile_size
         self.grid = []
-        self.units = []
+        self.units = []  # Oyundaki tüm birimleri tutacak liste
         self.create_grid()
 
     def create_grid(self):
@@ -38,30 +38,43 @@ class Map:
             tile.set_unit(unit)
             unit.grid_x = grid_x
             unit.grid_y = grid_y
-            # Birimin piksel pozisyonunu tile'a göre ayarla
             unit.set_pixel_pos(tile.pixel_x, tile.pixel_y, self.tile_size)
-            self.units.append(unit)
+            if unit not in self.units:  # Birimin listede olmadığından emin ol
+                self.units.append(unit)
             return True
         return False
 
     def move_unit(self, unit, new_grid_x, new_grid_y):
+        if not unit.is_alive(): return False  # Ölü birim hareket edemez
+
         old_tile = self.get_tile_at_grid_coords(unit.grid_x, unit.grid_y)
         new_tile = self.get_tile_at_grid_coords(new_grid_x, new_grid_y)
 
-        if new_tile and new_tile.is_walkable and not new_tile.unit_on_tile:
-            if old_tile:
+        if new_tile and new_tile.is_walkable and (not new_tile.unit_on_tile or new_tile.unit_on_tile == unit):
+            if old_tile and old_tile.unit_on_tile == unit:  # Sadece bu birim eski tile'daysa kaldır
                 old_tile.remove_unit()
 
-            new_tile.set_unit(unit)  # Bu zaten unit.set_pixel_pos çağırıyor
+            new_tile.set_unit(unit)
             unit.grid_x = new_grid_x
             unit.grid_y = new_grid_y
             return True
         return False
+
+    def remove_unit_from_map(self, unit_to_remove):
+        if unit_to_remove in self.units:
+            self.units.remove(unit_to_remove)
+
+        tile = self.get_tile_at_grid_coords(unit_to_remove.grid_x, unit_to_remove.grid_y)
+        if tile and tile.unit_on_tile == unit_to_remove:
+            tile.remove_unit()
+        print(f"{unit_to_remove.unit_type} removed from map.")
 
     def draw(self, surface):
         for row in self.grid:
             for tile in row:
                 tile.draw(surface)
 
+        # Sadece canlı birimleri çiz (Unit.draw içinde de kontrol var ama burada da yapılabilir)
         for unit in self.units:
-            unit.draw(surface)
+            if unit.is_alive():
+                unit.draw(surface)
