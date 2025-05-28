@@ -1,0 +1,14 @@
+{
+    "level_number": 1,
+    "level_name": "İlk Çarpışma",
+    "map_cols": 15,
+    "map_rows": 10,
+    "player_units": [
+        {"type": "Piyade", "x": 2, "y": 2, "player_id": 1},
+        {"type": "Piyade", "x": 2, "y": 4, "player_id": 1}
+    ],
+    "ai_units": [
+        {"type": "Piyade", "x": 12, "y": 2, "player_id": 2, "ai_strategy": "SimpleAggressiveStrategy"},
+        {"type": "Piyade", "x": 12, "y": 4, "player_id": 2, "ai_strategy": "SimpleAggressiveStrategy"}
+    ]
+}
