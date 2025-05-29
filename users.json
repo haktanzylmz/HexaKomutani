@@ -1,4 +1,10 @@
 {
-    "haktan1": "haktan1",
-    "haktan2": "haktan2"
+    "haktan1": {
+        "password": "haktan1",
+        "theme": "default"
+    },
+    "haktan2": {
+        "password": "haktan2",
+        "theme": "default"
+    }
 }

@@ -16,9 +16,9 @@ from .constants import PLAYER_HUMAN_ID, PLAYER_AI_ID
 USERS_FILE_NAME_BASE = "users.json"
 BASE_SAVE_FILENAME = "savegame.json"
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # game_core dizini
-SRC_DIR = os.path.dirname(SCRIPT_DIR)  # src dizini
-PROJECT_ROOT_DIR = os.path.dirname(SRC_DIR)  # HexaKomutani ana dizini
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_DIR = os.path.dirname(SCRIPT_DIR)
+PROJECT_ROOT_DIR = os.path.dirname(SRC_DIR)
 
 LEVELS_DIR = os.path.join(SRC_DIR, "levels")
 LEVEL_FILE_PREFIX = os.path.join(LEVELS_DIR, "level")
@@ -32,7 +32,128 @@ GAME_STATE_MAIN_MENU = "main_menu"
 GAME_STATE_GAMEPLAY = "gameplay"
 GAME_STATE_LOGIN = "login_screen"
 GAME_STATE_REGISTER = "register_screen"
+# GAME_STATE_THEME_SELECTION = "theme_selection" # İleride
 
+# --- TEMA TANIMLARI ---
+DEFAULT_THEME_COLORS = {
+    "name": "Varsayılan",
+    "background_main_menu": (40, 40, 60),
+    "button_main_menu_idle": (70, 70, 90),
+    "button_main_menu_hover": (90, 90, 110),
+    "button_main_menu_border": (120, 120, 150),
+    "text_main_menu_button": (220, 220, 255),
+    "title_main_menu": (200, 200, 255),
+    "feedback_text_color": (255, 200, 0),
+    "feedback_bg_color": (20, 20, 20, 200),
+    "user_message_loggedin": (180, 255, 180),
+    "user_message_loggedout": (255, 180, 180),
+    "tile_empty": (100, 100, 100), "tile_walkable_default_color": (200, 200, 200),  # Tile için varsayılan renk
+    "tile_obstacle": (50, 50, 50),
+    "unit_player_human_default_color": (50, 150, 50),  # Birimler için varsayılanlar
+    "unit_player_ai_default_color": (200, 50, 50),
+    "highlight_move": (0, 255, 0, 80),
+    "highlight_attack": (255, 0, 0, 80),
+    "gameplay_info_text_color": (0, 0, 0),  # Oyun içi bilgi yazıları (Siyah)
+    "gameplay_bg": (30, 30, 30),
+    "login_bg": (30, 30, 40),
+    "login_title_color": (200, 220, 255),
+    "login_label_color": (180, 180, 200),
+    "login_input_bg_color": (50, 50, 70),
+    "login_input_text_color": (220, 220, 255),
+    "login_input_active_border_color": (100, 150, 255),
+    "login_input_inactive_border_color": (80, 80, 100),
+    "login_button_primary_idle_color": (0, 120, 40),
+    "login_button_primary_hover_color": (0, 150, 50),
+    "login_button_secondary_idle_color": (0, 80, 120),
+    "login_button_secondary_hover_color": (0, 100, 150),
+    "login_button_danger_idle_color": (120, 40, 40),
+    "login_button_danger_hover_color": (150, 50, 50),
+    "login_button_text_color": (255, 255, 255),
+    "login_link_text_color": (200, 220, 255),
+}
+
+DARK_KNIGHT_THEME_COLORS = {
+    "name": "Kara Şövalye",
+    "background_main_menu": (10, 10, 20),
+    "button_main_menu_idle": (30, 30, 50),
+    "button_main_menu_hover": (50, 50, 70),
+    "button_main_menu_border": (80, 80, 100),
+    "text_main_menu_button": (180, 180, 200),
+    "title_main_menu": (160, 160, 210),
+    "feedback_text_color": (230, 180, 0),
+    "feedback_bg_color": (5, 5, 10, 190),
+    "user_message_loggedin": (150, 220, 150),
+    "user_message_loggedout": (220, 150, 150),
+    "tile_empty": (60, 60, 70), "tile_walkable_default_color": (150, 150, 160),
+    "tile_obstacle": (20, 20, 25),
+    "unit_player_human_default_color": (30, 100, 30),
+    "unit_player_ai_default_color": (160, 30, 30),
+    "highlight_move": (0, 180, 0, 70),
+    "highlight_attack": (180, 0, 0, 70),
+    "gameplay_info_text_color": (210, 210, 210),  # Koyu tema için açık renk yazı
+    "gameplay_bg": (10, 10, 15),
+    "login_bg": (15, 15, 25),
+    "login_title_color": (180, 200, 230),
+    "login_label_color": (160, 160, 180),
+    "login_input_bg_color": (30, 30, 50),
+    "login_input_text_color": (200, 200, 220),
+    "login_input_active_border_color": (80, 120, 200),
+    "login_input_inactive_border_color": (60, 60, 80),
+    "login_button_primary_idle_color": (0, 100, 30),
+    "login_button_primary_hover_color": (0, 130, 40),
+    "login_button_secondary_idle_color": (0, 70, 100),
+    "login_button_secondary_hover_color": (0, 90, 130),
+    "login_button_danger_idle_color": (100, 30, 30),
+    "login_button_danger_hover_color": (130, 40, 40),
+    "login_button_text_color": (230, 230, 230),
+    "login_link_text_color": (180, 200, 230),
+}
+
+FOREST_GUARDIAN_THEME_COLORS = {
+    "name": "Orman Muhafızı",
+    "background_main_menu": (30, 60, 40),
+    "button_main_menu_idle": (50, 90, 60),
+    "button_main_menu_hover": (70, 110, 80),
+    "button_main_menu_border": (90, 130, 100),
+    "text_main_menu_button": (210, 230, 200),
+    "title_main_menu": (190, 220, 180),
+    "feedback_text_color": (255, 220, 100),
+    "feedback_bg_color": (20, 40, 30, 200),
+    "user_message_loggedin": (190, 240, 190),
+    "user_message_loggedout": (240, 190, 190),
+    "tile_empty": (90, 120, 80), "tile_walkable_default_color": (180, 210, 170),
+    "tile_obstacle": (40, 70, 50),
+    "unit_player_human_default_color": (60, 160, 70),
+    "unit_player_ai_default_color": (180, 80, 50),
+    "highlight_move": (50, 255, 50, 80),
+    "highlight_attack": (255, 80, 30, 80),
+    "gameplay_info_text_color": (10, 20, 5),  # Koyu yeşilimsi
+    "gameplay_bg": (20, 50, 30),
+    "login_bg": (20, 50, 30),
+    "login_title_color": (180, 210, 170),
+    "login_label_color": (170, 200, 160),
+    "login_input_bg_color": (40, 70, 50),
+    "login_input_text_color": (210, 230, 200),
+    "login_input_active_border_color": (80, 180, 100),
+    "login_input_inactive_border_color": (60, 100, 70),
+    "login_button_primary_idle_color": (30, 110, 50),
+    "login_button_primary_hover_color": (40, 140, 60),
+    "login_button_secondary_idle_color": (30, 90, 110),
+    "login_button_secondary_hover_color": (40, 110, 140),
+    "login_button_danger_idle_color": (110, 60, 40),
+    "login_button_danger_hover_color": (140, 70, 50),
+    "login_button_text_color": (230, 240, 220),
+    "login_link_text_color": (190, 210, 180),
+}
+
+ALL_THEMES = {
+    "default": DEFAULT_THEME_COLORS,
+    "dark_knight": DARK_KNIGHT_THEME_COLORS,
+    "forest_guardian": FOREST_GUARDIAN_THEME_COLORS
+}
+
+
+# --- TEMA TANIMLARI SONU ---
 
 class Game:
     def __init__(self, screen_width, screen_height, load_from_save_on_start=False):
@@ -56,18 +177,17 @@ class Game:
         self.running = False
         self.current_game_state = GAME_STATE_MAIN_MENU
 
-        self.selected_unit = None
+        self.selected_unit = None;
         self.command_history = []
-        self.highlighted_tiles_for_move = []
+        self.highlighted_tiles_for_move = [];
         self.highlighted_tiles_for_attack = []
-        self.feedback_message = ""
+        self.feedback_message = "";
         self.feedback_message_timer = 0
         self.feedback_message_duration = 120
-        self.game_over_flag = False
+        self.game_over_flag = False;
         self.current_level_number = 1
-        self.tile_size = 40
-        self.initialized_successfully = False  # Gameplay için başlatma bayrağı
-
+        self.tile_size = 40;
+        self.initialized_successfully = False
         self.unit_factory = UnitFactory()
         self.ai_strategies = {"SimpleAggressiveStrategy": SimpleAggressiveStrategy()}
         self.default_ai_strategy = self.ai_strategies["SimpleAggressiveStrategy"]
@@ -81,26 +201,26 @@ class Game:
                                                 "password_confirm_reg"]}
         self.current_user = None
 
+        self.available_themes = ALL_THEMES
+        self.active_theme_name = "default"
+        self.active_theme = self.available_themes[self.active_theme_name]
+
         self.game_map = None
-        self.map_cols = 0
+        self.map_cols = 0;
         self.map_rows = 0
         self.current_player_id = PLAYER_HUMAN_ID
         self.ai_turn_processed_this_round = False
 
         self._ensure_data_dirs_exist()
-
-        # load_from_save_on_start artık __init__ içinde doğrudan oyun yüklemiyor.
-        # Oyun her zaman ana menü ile başlar. Yükleme menüden yapılır.
-        # Bu bayrak, ileride komut satırı argümanları vb. için tutulabilir ama şu anki akışta gereksiz.
+        self.load_user_preferences()  # Kullanıcı giriş yapmadan da varsayılan tema ayarlanabilir veya son tema yüklenebilir
 
     def _ensure_data_dirs_exist(self):
         user_file_dir = os.path.dirname(USERS_FILE_NAME)
         if user_file_dir and not os.path.exists(user_file_dir):
             try:
-                os.makedirs(user_file_dir, exist_ok=True)  # Ana dizin zaten var olmalı
+                os.makedirs(user_file_dir, exist_ok=True)
             except OSError as e:
                 print(f"Error creating directory for '{USERS_FILE_NAME}': {e}")
-
         if not os.path.exists(USERS_FILE_NAME):
             try:
                 with open(USERS_FILE_NAME, 'w', encoding='utf-8') as f:
@@ -108,7 +228,6 @@ class Game:
                 print(f"'{USERS_FILE_NAME}' created at: {os.path.abspath(USERS_FILE_NAME)}")
             except IOError as e:
                 print(f"Error creating '{USERS_FILE_NAME}': {e}")
-
         if not os.path.exists(SAVES_DIR):
             try:
                 os.makedirs(SAVES_DIR, exist_ok=True)
@@ -139,6 +258,42 @@ class Game:
             return True
         except IOError:
             return False
+
+    def set_active_theme(self, theme_name):
+        """Aktif temayı değiştirir ve kullanıcı için kaydeder."""
+        if theme_name in self.available_themes:
+            self.active_theme_name = theme_name
+            self.active_theme = self.available_themes[theme_name]
+            print(f"Tema '{self.active_theme.get('name', theme_name)}' olarak değiştirildi.")
+
+            if self.current_user:
+                users = self._load_users()
+                user_data = users.get(self.current_user)
+                if isinstance(user_data, dict):  # Yeni format {"password": "...", "theme": "..."}
+                    user_data["theme"] = theme_name
+                elif isinstance(user_data, str):  # Eski format (sadece şifre)
+                    users[self.current_user] = {"password": user_data, "theme": theme_name}
+                else:  # Kullanıcı yok veya beklenmedik format
+                    users[self.current_user] = {"password": "",
+                                                "theme": theme_name}  # Şifresiz yeni kullanıcı gibi? Veya hata ver.
+                self._save_users(users)
+        else:
+            print(f"Uyarı: Tema '{theme_name}' bulunamadı. Varsayılan tema ('default') kullanılıyor.")
+            self.active_theme_name = "default"
+            self.active_theme = self.available_themes["default"]
+
+    def load_user_preferences(self):
+        """Giriş yapmış kullanıcının tema tercihini yükler."""
+        if self.current_user:
+            users = self._load_users()
+            user_data = users.get(self.current_user)
+            if isinstance(user_data, dict):
+                theme_name = user_data.get("theme", "default")
+                self.set_active_theme(theme_name)
+            else:  # Eski format veya kullanıcı yoksa varsayılan tema
+                self.set_active_theme("default")
+        else:  # Giriş yapılmamışsa varsayılan tema
+            self.set_active_theme("default")
 
     def initialize_gameplay_state(self, level_to_load=1, is_new_game_session=True):
         print(f"Initializing gameplay state for level {level_to_load}, new session: {is_new_game_session}")
@@ -176,6 +331,17 @@ class Game:
         level_name = level_data.get('level_name', f'Lvl {level_number}')
         print(f"Level {level_number} ('{level_name}') initialized.");
         self.show_feedback_message(f"Level {level_number}: {level_name}", self.feedback_message_duration)
+        # Tema renklerini birimlere ve tile'lara uygula (eğer temada varsa)
+        if hasattr(self, 'game_map') and self.game_map:
+            default_tile_color = self.active_theme.get("tile_walkable_default_color", (200, 200, 200))
+            for row in self.game_map.grid:
+                for tile in row:
+                    tile.color = default_tile_color  # Varsayılan tile rengini temadan al
+            for unit in self.game_map.units:
+                if unit.player_id == PLAYER_HUMAN_ID:
+                    unit.color = self.active_theme.get("unit_player_human_default_color", (50, 150, 50))
+                elif unit.player_id == PLAYER_AI_ID:
+                    unit.color = self.active_theme.get("unit_player_ai_default_color", (200, 50, 50))
         return True
 
     def reset_unit_actions_for_player(self, player_id):
@@ -204,12 +370,13 @@ class Game:
             for unit_info in level_data["player_units"]:
                 unit = self.unit_factory.create_unit(unit_info["type"], unit_info["x"], unit_info["y"],
                                                      unit_info["player_id"])
+                # Renk ataması _initialize_game_for_level sonunda temaya göre yapılacak
                 self.game_map.add_unit(unit, unit.grid_x, unit.grid_y)
         if "ai_units" in level_data:
             for unit_info in level_data["ai_units"]:
                 unit = self.unit_factory.create_unit(unit_info["type"], unit_info["x"], unit_info["y"],
                                                      unit_info["player_id"])
-                if unit and unit.player_id == PLAYER_AI_ID: unit.color = (200, 50, 50)
+                # Renk ataması _initialize_game_for_level sonunda temaya göre yapılacak
                 self.game_map.add_unit(unit, unit.grid_x, unit.grid_y)
 
     def show_feedback_message(self, message, duration_frames):
@@ -220,7 +387,7 @@ class Game:
         if not self.current_user:
             self.show_feedback_message("Kaydetmek için giriş yapmalısınız!", self.feedback_message_duration);
             return
-        if not self.initialized_successfully or not self.game_map:  # Gameplay aktif mi kontrolü
+        if not self.initialized_successfully or not self.game_map:
             self.show_feedback_message("Cannot save: Gameplay not active.", self.feedback_message_duration);
             return
         user_save_file = self._get_user_save_filename()
@@ -232,7 +399,8 @@ class Game:
             "current_level_number": self.current_level_number, "map_data": self.game_map.to_dict(),
             "units_data": [unit.to_dict() for unit in self.game_map.units if unit.is_alive()],
             "next_unit_id": Unit._id_counter, "game_over_flag": self.game_over_flag,
-            "ai_turn_processed_this_round": self.ai_turn_processed_this_round
+            "ai_turn_processed_this_round": self.ai_turn_processed_this_round,
+            "active_theme_name": self.active_theme_name  # Aktif tema adını da kaydet
         }
         try:
             with open(user_save_file, 'w', encoding='utf-8') as f:
@@ -255,16 +423,25 @@ class Game:
                 game_state_data = json.load(f)
             self.command_history = []
             self.current_level_number = game_state_data.get("current_level_number", 1)
+
+            # Temayı yükle (harita ve birimlerden önce)
+            loaded_theme_name = game_state_data.get("active_theme_name", "default")
+            self.set_active_theme(loaded_theme_name)  # Bu, self.active_theme'i ayarlar
+
             map_info = game_state_data["map_data"]
             self.map_rows = map_info["rows"];
             self.map_cols = map_info["cols"]
-            self.game_map = Map(self.map_rows, self.map_cols, self.tile_size)  # game_map burada oluşturuluyor
+            self.game_map = Map(self.map_rows, self.map_cols, self.tile_size)
             self.game_map.grid = []
+            default_tile_color = self.active_theme.get("tile_walkable_default_color", (200, 200, 200))
             for r_idx, row_data in enumerate(map_info["grid_tiles"]):
                 current_row = [];
                 self.game_map.grid.append(current_row)
-                for c_idx, tile_data in enumerate(row_data): current_row.append(
-                    Tile.from_dict(tile_data, self.tile_size))
+                for c_idx, tile_data in enumerate(row_data):
+                    tile = Tile.from_dict(tile_data, self.tile_size)
+                    tile.color = default_tile_color  # Yüklenen temaya göre tile rengi
+                    current_row.append(tile)
+
             self.game_map.units = []
             Unit._id_counter = game_state_data.get("next_unit_id", Unit._id_counter)
             for unit_data in game_state_data["units_data"]:
@@ -279,14 +456,18 @@ class Game:
                 unit.movement_range = unit_data.get("movement_range", unit.movement_range)
                 unit.attack_range = unit_data.get("attack_range", unit.attack_range);
                 unit.has_acted_this_turn = unit_data.get("has_acted_this_turn", False)
-                if unit.player_id == PLAYER_AI_ID:
-                    unit.color = (200, 50, 50)
-                elif unit.player_id == PLAYER_HUMAN_ID:
-                    unit.color = (50, 150, 50)
+
+                # Birim rengini temadan al
+                if unit.player_id == PLAYER_HUMAN_ID:
+                    unit.color = self.active_theme.get("unit_player_human_default_color", (50, 150, 50))
+                elif unit.player_id == PLAYER_AI_ID:
+                    unit.color = self.active_theme.get("unit_player_ai_default_color", (200, 50, 50))
+
                 state_name = unit_data.get("current_state_name", "IdleState");
                 state_class = STATE_NAME_TO_CLASS_MAP.get(state_name, IdleState)
                 unit.set_state(state_class(unit), self);
                 self.game_map.add_unit(unit, unit.grid_x, unit.grid_y)
+
             self.current_player_id = game_state_data["current_player_id"];
             self.game_over_flag = game_state_data.get("game_over_flag", False)
             self.ai_turn_processed_this_round = game_state_data.get("ai_turn_processed_this_round", (
@@ -324,39 +505,53 @@ class Game:
             return False
 
     def draw_main_menu(self):
-        self.screen.fill((40, 40, 60));
-        title_surf = self.font_large.render("Hexa Komutanı", True, (200, 200, 255))
-        title_rect = title_surf.get_rect(center=(self.screen_width // 2, self.screen_height // 4 - 20));
+        self.screen.fill(self.active_theme.get("background_main_menu", (40, 40, 60)))
+        title_surf = self.font_large.render("Hexa Komutanı", True,
+                                            self.active_theme.get("title_main_menu", (200, 200, 255)))
+        title_rect = title_surf.get_rect(center=(self.screen_width // 2, self.screen_height // 4 - 20))
         self.screen.blit(title_surf, title_rect)
+
         user_message = f"Giriş Yapıldı: {self.current_user}" if self.current_user else "Giriş Yapılmadı"
-        user_color = (180, 255, 180) if self.current_user else (255, 180, 180)
-        user_surf = self.font_small.render(user_message, True, user_color);
-        user_rect = user_surf.get_rect(center=(self.screen_width // 2, title_rect.bottom + 30));
+        user_color = self.active_theme.get("user_message_loggedin" if self.current_user else "user_message_loggedout",
+                                           (255, 255, 255))
+        user_surf = self.font_small.render(user_message, True, user_color)
+        user_rect = user_surf.get_rect(center=(self.screen_width // 2, title_rect.bottom + 30))
         self.screen.blit(user_surf, user_rect)
-        button_texts = ["Yeni Oyun", "Oyun Yükle"];
-        button_texts.append("Çıkış Yap" if self.current_user else "Giriş / Kayıt");
+
+        button_texts = ["Yeni Oyun", "Oyun Yükle"]
+        button_texts.append("Çıkış Yap" if self.current_user else "Giriş / Kayıt")
+        # button_texts.append("Temalar") # Bir sonraki adımda eklenecek
         button_texts.append("Oyundan Çık")
+
         button_height = 50;
         button_width = 220;
-        start_y = user_rect.bottom + 40;
+        start_y = user_rect.bottom + 40
         self.main_menu_buttons.clear()
         for i, text in enumerate(button_texts):
             button_y = start_y + i * (button_height + 15)
             button_rect = pygame.Rect((self.screen_width - button_width) // 2, button_y, button_width, button_height)
             self.main_menu_buttons[text] = button_rect;
             mouse_pos = pygame.mouse.get_pos()
-            button_color = (90, 90, 110) if button_rect.collidepoint(mouse_pos) else (70, 70, 90)
-            pygame.draw.rect(self.screen, button_color, button_rect, border_radius=5);
-            pygame.draw.rect(self.screen, (120, 120, 150), button_rect, 3, border_radius=5)
-            text_surf = self.font_medium.render(text, True, (220, 220, 255));
+
+            idle_color = self.active_theme.get("button_main_menu_idle", (70, 70, 90))
+            hover_color = self.active_theme.get("button_main_menu_hover", (90, 90, 110))
+            border_color = self.active_theme.get("button_main_menu_border", (120, 120, 150))
+            text_render_color = self.active_theme.get("text_main_menu_button", (220, 220, 255))
+
+            button_color = hover_color if button_rect.collidepoint(mouse_pos) else idle_color
+            pygame.draw.rect(self.screen, button_color, button_rect, border_radius=5)
+            pygame.draw.rect(self.screen, border_color, button_rect, 3, border_radius=5)
+            text_surf = self.font_medium.render(text, True, text_render_color)
             text_rect = text_surf.get_rect(center=button_rect.center);
             self.screen.blit(text_surf, text_rect)
+
         if self.feedback_message_timer > 0 and self.feedback_message:
-            feedback_surf = self.font_medium.render(self.feedback_message, True, (255, 200, 0))
+            feedback_surf = self.font_medium.render(self.feedback_message, True,
+                                                    self.active_theme.get("feedback_text_color", (255, 200, 0)))
             bg_rect = feedback_surf.get_rect(center=(self.screen_width // 2, self.screen_height - 40));
             bg_rect.inflate_ip(20, 10)
             bg_surface = pygame.Surface(bg_rect.size, pygame.SRCALPHA);
-            bg_surface.fill((0, 0, 0, 180));
+            bg_surface.fill(self.active_theme.get("feedback_bg_color", (0, 0, 0, 180)))
             self.screen.blit(bg_surface, bg_rect.topleft);
             self.screen.blit(feedback_surf, feedback_surf.get_rect(center=bg_rect.center))
         pygame.display.flip()
@@ -389,109 +584,39 @@ class Game:
                             self.show_feedback_message(f"{self.current_user} çıkış yaptı.",
                                                        self.feedback_message_duration);
                             self.current_user = None
+                            self.set_active_theme("default")  # Çıkış yapınca varsayılan temaya dön
                         elif button_text == "Oyundan Çık":
                             self.running = False
                         break
-
-    def run(self):
-        # __init__ içinde initialized_successfully kontrolü yapılıyor ve
-        # eğer ana menüde değilsek ve başlangıç başarısızsa, __init__ zaten bir hata mesajı gösterip
-        # bu run metodunun düzgün çalışmasını engelleyecek bir durumda olabilir.
-        # Ancak yine de bir ön kontrol ekleyelim.
-        if not self.initialized_successfully and self.current_game_state not in [GAME_STATE_MAIN_MENU, GAME_STATE_LOGIN,
-                                                                                 GAME_STATE_REGISTER]:
-            print("FATAL in run(): Game not initialized and not in a pre-game state. Exiting.")
-            if self.screen and pygame.get_init():  # Ekran varsa ve pygame çalışıyorsa
-                self.screen.fill((50, 0, 0))  # Koyu kırmızı bir arka plan
-                error_surf = self.font_medium.render("FATAL ERROR IN RUN. Check Console.", True, (255, 255, 255))
-                rect = error_surf.get_rect(center=(self.screen_width // 2, self.screen_height // 2))
-                self.screen.blit(error_surf, rect)
-                pygame.display.flip()
-                pygame.time.wait(3000)  # Mesajı 3 saniye göster
-            if pygame.get_init():  # Pygame başlatıldıysa kapat
-                pygame.quit()
-            return  # run metodundan çık
-
-        self.running = True
-        while self.running:
-            self.dt = self.clock.tick(60) / 1000.0  # Delta time saniye cinsinden
-
-            # Olayları bir kere al ve ilgili state'in event handler'ına yolla
-            events = pygame.event.get()
-            for event in events:
-                if event.type == pygame.QUIT:
-                    self.running = False
-
-            # Genel feedback mesajı zamanlayıcısını güncelle (her state için geçerli)
-            if self.feedback_message_timer > 0:
-                self.feedback_message_timer -= 1
-                if self.feedback_message_timer == 0:
-                    self.feedback_message = ""
-
-            # Oyun durumuna göre olayları, güncellemeyi ve çizimi yönlendir
-            if self.current_game_state == GAME_STATE_MAIN_MENU:
-                for event in events:  # Main menu eventlerini işle
-                    self.handle_main_menu_input(event)
-                # Main menu için update (örn: buton hover efektleri için değil ama feedback için)
-                self.draw_main_menu()
-
-            elif self.current_game_state == GAME_STATE_LOGIN:
-                for event in events:  # Login ekranı eventlerini işle
-                    self.handle_login_input(event)
-                self.draw_login_screen()
-
-            elif self.current_game_state == GAME_STATE_REGISTER:
-                for event in events:  # Register ekranı eventlerini işle
-                    self.handle_register_input(event)
-                self.draw_register_screen()
-
-            elif self.current_game_state == GAME_STATE_GAMEPLAY:
-                if not self.initialized_successfully:
-                    # Bu duruma normalde __init__ veya state geçişleri izin vermemeli
-                    print("Error: Gameplay state entered but not properly initialized. Returning to main menu.")
-                    self.current_game_state = GAME_STATE_MAIN_MENU
-                    self.show_feedback_message("Gameplay initialization error.", self.feedback_message_duration)
-                    continue  # Döngünün bu adımını atla, sonraki frame'de menü çizilecek
-
-                # Gameplay için olaylar
-                for event in events:
-                    self.handle_gameplay_events(event)  # Gameplay'e özel event'leri işle
-
-                if not self.game_over_flag:  # Oyun bitmediyse
-                    # AI sırasıysa ve AI henüz o tur için tüm hamlelerini bitirmediyse
-                    if self.current_player_id == PLAYER_AI_ID and self.running and not self.ai_turn_processed_this_round:
-                        self.process_ai_turn()
-                    self.update_gameplay()  # Gameplay'e özel güncellemeler
-
-                self.render_gameplay()  # Gameplay ekranını çiz
-
-            # Diğer oyun durumları (eğer eklenirse) buraya eklenebilir
-            # elif self.current_game_state == ... :
-            #     ...
-
-        # Oyun döngüsü bittiğinde (self.running = False olduğunda)
-        print("Exiting game loop...")
-        if pygame.get_init():  # Eğer Pygame hala başlatılmışsa, düzgünce kapat
-            pygame.quit()
-            pygame.quit()
 
     def clear_input_fields(self):
         self.input_texts = {key: "" for key in self.input_texts};
         self.active_input_field = None
 
-    def draw_login_screen(self):
-        self.screen.fill((30, 30, 40));
-        title_surf = self.font_large.render("Giriş Yap", True, (200, 220, 255))
+    def draw_login_screen(self):  # Tema renkleri eklenecek
+        theme = self.active_theme
+        self.screen.fill(theme.get("login_bg", (30, 30, 40)))
+        title_surf = self.font_large.render("Giriş Yap", True, theme.get("login_title_color", (200, 220, 255)))
         title_rect = title_surf.get_rect(center=(self.screen_width // 2, self.screen_height // 5));
         self.screen.blit(title_surf, title_rect)
+
         input_width = 300;
         input_height = 35;
-        field_spacing = 15;
-        label_color = (180, 180, 200);
-        input_box_bg = (50, 50, 70);
-        text_color = (220, 220, 255);
-        active_border = (100, 150, 255);
-        inactive_border = (80, 80, 100)
+        field_spacing = 15
+        label_color = theme.get("login_label_color", (180, 180, 200))
+        input_box_bg = theme.get("login_input_bg_color", (50, 50, 70))
+        text_color = theme.get("login_input_text_color", (220, 220, 255))
+        active_border = theme.get("login_input_active_border_color", (100, 150, 255))
+        inactive_border = theme.get("login_input_inactive_border_color", (80, 80, 100))
+        btn_primary_idle = theme.get("login_button_primary_idle_color", (0, 120, 40))
+        btn_primary_hover = theme.get("login_button_primary_hover_color", (0, 150, 50))
+        btn_secondary_idle = theme.get("login_button_secondary_idle_color", (0, 80, 120))
+        btn_secondary_hover = theme.get("login_button_secondary_hover_color", (0, 100, 150))
+        btn_danger_idle = theme.get("login_button_danger_idle_color", (120, 40, 40))
+        btn_danger_hover = theme.get("login_button_danger_hover_color", (150, 50, 50))
+        btn_text_color = theme.get("login_button_text_color", (255, 255, 255))
+        link_text_color = theme.get("login_link_text_color", (200, 220, 255))
+
         current_y = self.screen_height // 2 - input_height - field_spacing - 10
         username_label_s = self.font_small.render("Kullanıcı Adı:", True, label_color);
         self.screen.blit(username_label_s, ((self.screen_width - input_width) // 2, current_y - 20))
@@ -519,41 +644,45 @@ class Game:
         btn_width = 140;
         btn_height = 40;
         btn_spacing = 20
+        mouse_pos_hover = pygame.mouse.get_pos()  # Hover için mouse pozisyonunu al
         login_btn_rect = pygame.Rect(self.screen_width // 2 - btn_width - btn_spacing // 2, current_y, btn_width,
                                      btn_height);
         self.login_screen_elements["login_button"] = login_btn_rect
         pygame.draw.rect(self.screen,
-                         (0, 150, 50) if login_btn_rect.collidepoint(pygame.mouse.get_pos()) else (0, 120, 40),
+                         btn_primary_hover if login_btn_rect.collidepoint(mouse_pos_hover) else btn_primary_idle,
                          login_btn_rect, border_radius=5)
-        login_text_s = self.font_medium.render("Giriş Yap", True, (255, 255, 255));
+        login_text_s = self.font_medium.render("Giriş Yap", True, btn_text_color);
         self.screen.blit(login_text_s, login_text_s.get_rect(center=login_btn_rect.center))
         register_link_rect = pygame.Rect(self.screen_width // 2 + btn_spacing // 2, current_y, btn_width, btn_height);
         self.login_screen_elements["register_link_button"] = register_link_rect
-        pygame.draw.rect(self.screen,
-                         (0, 100, 150) if register_link_rect.collidepoint(pygame.mouse.get_pos()) else (0, 80, 120),
-                         register_link_rect, border_radius=5)
-        reg_text_s = self.font_medium.render("Kayıt Ol", True, (200, 220, 255));
+        pygame.draw.rect(self.screen, btn_secondary_hover if register_link_rect.collidepoint(
+            mouse_pos_hover) else btn_secondary_idle, register_link_rect, border_radius=5)
+        reg_text_s = self.font_medium.render("Kayıt Ol", True, link_text_color);
         self.screen.blit(reg_text_s, reg_text_s.get_rect(center=register_link_rect.center))
         current_y += btn_height + 15
         back_btn_rect = pygame.Rect((self.screen_width - (btn_width * 1.5)) // 2, current_y, btn_width * 1.5,
                                     btn_height);
         self.login_screen_elements["back_button_login"] = back_btn_rect
         pygame.draw.rect(self.screen,
-                         (150, 50, 50) if back_btn_rect.collidepoint(pygame.mouse.get_pos()) else (120, 40, 40),
+                         btn_danger_hover if back_btn_rect.collidepoint(mouse_pos_hover) else btn_danger_idle,
                          back_btn_rect, border_radius=5)
-        back_text_s = self.font_medium.render("Ana Menüye Dön", True, (255, 200, 200));
+        back_text_s = self.font_medium.render("Ana Menüye Dön", True,
+                                              theme.get("login_button_text_color_danger", (255, 200, 200)));
         self.screen.blit(back_text_s, back_text_s.get_rect(center=back_btn_rect.center))
+
         if self.feedback_message_timer > 0 and self.feedback_message:
-            feedback_surf = self.font_medium.render(self.feedback_message, True, (255, 200, 0))
+            feedback_surf = self.font_medium.render(self.feedback_message, True,
+                                                    self.active_theme.get("feedback_text_color", (255, 200, 0)))
             bg_rect = feedback_surf.get_rect(center=(self.screen_width // 2, self.screen_height - 40));
             bg_rect.inflate_ip(20, 10)
             bg_surface = pygame.Surface(bg_rect.size, pygame.SRCALPHA);
-            bg_surface.fill((0, 0, 0, 180));
+            bg_surface.fill(self.active_theme.get("feedback_bg_color", (0, 0, 0, 180)))
             self.screen.blit(bg_surface, bg_rect.topleft);
             self.screen.blit(feedback_surf, feedback_surf.get_rect(center=bg_rect.center))
         pygame.display.flip()
 
     def handle_login_input(self, event):
+        # (Bir öncekiyle aynı)
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = event.pos
             if self.login_screen_elements.get("username_input") and self.login_screen_elements[
@@ -597,34 +726,56 @@ class Game:
             if event.key == pygame.K_ESCAPE: self.current_game_state = GAME_STATE_MAIN_MENU; self.clear_input_fields()
 
     def attempt_login(self):
+        # (Bir öncekiyle aynı)
         username = self.input_texts["username_login"].strip();
         password = self.input_texts["password_login"]
         if not username or not password: self.show_feedback_message("Kullanıcı adı ve şifre giriniz!",
                                                                     self.feedback_message_duration); return
         users = self._load_users()
-        if username in users and users[username] == password:
-            self.current_user = username;
+        user_data = users.get(username)
+        if user_data and isinstance(user_data, dict) and user_data.get("password") == password:
+            self.current_user = username
             self.show_feedback_message(f"Hoşgeldin, {self.current_user}!", self.feedback_message_duration)
+            user_theme = user_data.get("theme", "default")
+            self.set_active_theme(user_theme)  # Temayı yükle
+            self.current_game_state = GAME_STATE_MAIN_MENU;
+            self.clear_input_fields()
+        elif user_data and isinstance(user_data, str) and user_data == password:  # Eski format kontrolü
+            self.current_user = username
+            self.show_feedback_message(f"Hoşgeldin (eski format), {self.current_user}!", self.feedback_message_duration)
+            users[username] = {"password": password, "theme": "default"}
+            self._save_users(users)
+            self.set_active_theme("default")
             self.current_game_state = GAME_STATE_MAIN_MENU;
             self.clear_input_fields()
         else:
             self.show_feedback_message("Hatalı kullanıcı adı veya şifre!", self.feedback_message_duration);
             self.input_texts["password_login"] = ""
 
-    def draw_register_screen(self):
-        self.screen.fill((50, 40, 60));
-        title_surf = self.font_large.render("Kayıt Ol", True, (220, 200, 255))
+    def draw_register_screen(self):  # Tema renkleri eklenecek
+        theme = self.active_theme
+        self.screen.fill(theme.get("login_bg", (50, 40, 60)));
+        title_surf = self.font_large.render("Kayıt Ol", True, theme.get("login_title_color", (220, 200, 255)))
         title_rect = title_surf.get_rect(center=(self.screen_width // 2, self.screen_height // 6));
         self.screen.blit(title_surf, title_rect)
         input_width = 300;
         input_height = 35;
         field_spacing = 10;
-        label_color = (180, 180, 200);
-        input_box_bg = (50, 50, 70);
-        text_color = (220, 220, 255);
-        active_border = (100, 150, 255);
-        inactive_border = (80, 80, 100)
+        label_color = theme.get("login_label_color", (180, 180, 200));
+        input_box_bg = theme.get("login_input_bg_color", (50, 50, 70))
+        text_color = theme.get("login_input_text_color", (220, 220, 255));
+        active_border = theme.get("login_input_active_border_color", (100, 150, 255))
+        inactive_border = theme.get("login_input_inactive_border_color", (80, 80, 100))
+        btn_primary_idle = theme.get("login_button_primary_idle_color", (0, 120, 40))
+        btn_primary_hover = theme.get("login_button_primary_hover_color", (0, 150, 50))
+        btn_secondary_idle = theme.get("login_button_secondary_idle_color", (0, 80, 120))
+        btn_secondary_hover = theme.get("login_button_secondary_hover_color", (0, 100, 150))
+        btn_danger_idle = theme.get("login_button_danger_idle_color", (120, 40, 40))
+        btn_danger_hover = theme.get("login_button_danger_hover_color", (150, 50, 50))
+        btn_text_color = theme.get("login_button_text_color", (255, 255, 255))
+        link_text_color = theme.get("login_link_text_color", (200, 220, 255))
         current_y = title_rect.bottom + 30
+
         username_label_s = self.font_small.render("Yeni Kullanıcı Adı:", True, label_color);
         self.screen.blit(username_label_s, ((self.screen_width - input_width) // 2, current_y - 20))
         username_reg_rect = pygame.Rect((self.screen_width - input_width) // 2, current_y, input_width, input_height);
@@ -665,44 +816,46 @@ class Game:
         btn_width = 140;
         btn_height = 40;
         btn_spacing = 20
+        mouse_pos_hover = pygame.mouse.get_pos()
         register_btn_rect = pygame.Rect(self.screen_width // 2 - btn_width - btn_spacing // 2, current_y, btn_width,
                                         btn_height);
         self.register_screen_elements["register_button"] = register_btn_rect
         pygame.draw.rect(self.screen,
-                         (0, 150, 50) if register_btn_rect.collidepoint(pygame.mouse.get_pos()) else (0, 120, 40),
+                         btn_primary_hover if register_btn_rect.collidepoint(mouse_pos_hover) else btn_primary_idle,
                          register_btn_rect, border_radius=5)
-        reg_btn_text_s = self.font_medium.render("Kayıt Ol", True, (255, 255, 255));
+        reg_btn_text_s = self.font_medium.render("Kayıt Ol", True, btn_text_color);
         self.screen.blit(reg_btn_text_s, reg_btn_text_s.get_rect(center=register_btn_rect.center))
         login_link_rect = pygame.Rect(self.screen_width // 2 + btn_spacing // 2, current_y, btn_width, btn_height);
         self.register_screen_elements["login_link_button_reg"] = login_link_rect
         pygame.draw.rect(self.screen,
-                         (0, 100, 150) if login_link_rect.collidepoint(pygame.mouse.get_pos()) else (0, 80, 120),
+                         btn_secondary_hover if login_link_rect.collidepoint(mouse_pos_hover) else btn_secondary_idle,
                          login_link_rect, border_radius=5)
-        login_link_text_s = self.font_medium.render("Giriş Yap", True, (200, 220, 255));
+        login_link_text_s = self.font_medium.render("Giriş Yap", True, link_text_color);
         self.screen.blit(login_link_text_s, login_link_text_s.get_rect(center=login_link_rect.center))
         current_y += btn_height + 15
         back_btn_menu_rect = pygame.Rect((self.screen_width - (btn_width * 1.5)) // 2, current_y, btn_width * 1.5,
                                          btn_height);
         self.register_screen_elements["back_button_menu_reg"] = back_btn_menu_rect
         pygame.draw.rect(self.screen,
-                         (150, 50, 50) if back_btn_menu_rect.collidepoint(pygame.mouse.get_pos()) else (120, 40, 40),
+                         btn_danger_hover if back_btn_menu_rect.collidepoint(mouse_pos_hover) else btn_danger_idle,
                          back_btn_menu_rect, border_radius=5)
-        back_menu_text_s = self.font_medium.render("Ana Menüye Dön", True, (255, 200, 200));
+        back_menu_text_s = self.font_medium.render("Ana Menüye Dön", True,
+                                                   theme.get("login_button_text_color_danger", (255, 200, 200)));
         self.screen.blit(back_menu_text_s, back_menu_text_s.get_rect(center=back_btn_menu_rect.center))
         if self.feedback_message_timer > 0 and self.feedback_message:
-            feedback_surf = self.font_medium.render(self.feedback_message, True, (255, 200, 0))
+            feedback_surf = self.font_medium.render(self.feedback_message, True,
+                                                    self.active_theme.get("feedback_text_color", (255, 200, 0)))
             bg_rect = feedback_surf.get_rect(center=(self.screen_width // 2, self.screen_height - 40));
             bg_rect.inflate_ip(20, 10)
             bg_surface = pygame.Surface(bg_rect.size, pygame.SRCALPHA);
-            bg_surface.fill((0, 0, 0, 180));
+            bg_surface.fill(self.active_theme.get("feedback_bg_color", (0, 0, 0, 180)))
             self.screen.blit(bg_surface, bg_rect.topleft);
             self.screen.blit(feedback_surf, feedback_surf.get_rect(center=bg_rect.center))
         pygame.display.flip()
 
-    def handle_register_input(self, event):
+    def handle_register_input(self, event):  # (Bir öncekiyle aynı)
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = event.pos
-            # .get() ile güvenli erişim, özellikle register_screen_elements henüz tam dolmadıysa
             if self.register_screen_elements.get("username_input_reg") and self.register_screen_elements[
                 "username_input_reg"].collidepoint(mouse_pos):
                 self.active_input_field = "username_reg"
@@ -751,7 +904,7 @@ class Game:
             if event.key == pygame.K_ESCAPE: self.current_game_state = GAME_STATE_LOGIN; self.active_input_field = "username_login"; self.clear_input_fields(); self.show_feedback_message(
                 "Giriş Ekranı", self.feedback_message_duration)
 
-    def attempt_registration(self):
+    def attempt_registration(self):  # (Bir öncekiyle aynı)
         username = self.input_texts["username_reg"].strip();
         password = self.input_texts["password_reg"];
         password_confirm = self.input_texts["password_confirm_reg"]
@@ -767,7 +920,7 @@ class Game:
         users = self._load_users()
         if username in users: self.show_feedback_message("Bu kullanıcı adı zaten alınmış!",
                                                          self.feedback_message_duration); return
-        users[username] = password
+        users[username] = {"password": password, "theme": "default"}  # Yeni formatla kaydet
         if self._save_users(users):
             self.show_feedback_message("Kayıt başarılı! Şimdi giriş yapabilirsiniz.", self.feedback_message_duration)
             self.current_game_state = GAME_STATE_LOGIN;
@@ -777,7 +930,48 @@ class Game:
         else:
             self.show_feedback_message("Kayıt sırasında bir hata oluştu!", self.feedback_message_duration)
 
-    # --- Kalan Gameplay Metodları ---
+    # --- run ve kalan Gameplay Metodları ---
+    # (Bu metodlar bir önceki yanıttaki halleriyle aynı kalacak, değişiklik yok)
+    def run(self):
+        if not self.initialized_successfully and self.current_game_state not in [GAME_STATE_MAIN_MENU, GAME_STATE_LOGIN,
+                                                                                 GAME_STATE_REGISTER]:
+            print("Game could not be initialized properly. Exiting.");
+            if self.screen and pygame.get_init(): self.screen.fill((50, 0, 0)); error_surf = self.font_medium.render(
+                "FATAL: INIT FAILED. Check Console/Level Files.", True, (255, 255, 255)); rect = error_surf.get_rect(
+                center=(self.screen_width // 2, self.screen_height // 2)); self.screen.blit(error_surf,
+                                                                                            rect); pygame.display.flip(); pygame.time.wait(
+                5000)
+            if pygame.get_init(): pygame.quit(); return
+        self.running = True
+        while self.running:
+            self.dt = self.clock.tick(60) / 1000.0
+            events = pygame.event.get()
+            for event in events:
+                if event.type == pygame.QUIT: self.running = False
+            if self.feedback_message_timer > 0: self.feedback_message_timer -= 1
+            if self.feedback_message_timer == 0: self.feedback_message = ""
+            if self.current_game_state == GAME_STATE_MAIN_MENU:
+                for event in events: self.handle_main_menu_input(event)
+                self.draw_main_menu()
+            elif self.current_game_state == GAME_STATE_LOGIN:
+                for event in events: self.handle_login_input(event)
+                self.draw_login_screen()
+            elif self.current_game_state == GAME_STATE_REGISTER:
+                for event in events: self.handle_register_input(event)
+                self.draw_register_screen()
+            elif self.current_game_state == GAME_STATE_GAMEPLAY:
+                if not self.initialized_successfully: print(
+                    "Error: Gameplay state entered but not initialized. Returning to main menu."); self.current_game_state = GAME_STATE_MAIN_MENU; continue
+                for event in events: self.handle_gameplay_events(event)
+                if not self.game_over_flag:
+                    if self.current_player_id == PLAYER_AI_ID and self.running and not self.ai_turn_processed_this_round:
+                        self.process_ai_turn()
+                    self.update_gameplay()
+                self.render_gameplay()
+        print("Exiting game loop...");
+        if pygame.get_init(): pygame.quit()
+
+    # ... (Diğer gameplay metodları (highlight_..., execute_command, vs.) öncekiyle aynı)
     def highlight_movable_tiles(self, unit):
         self.clear_highlighted_tiles()
         if unit and unit.is_alive() and unit.player_id == self.current_player_id and not unit.has_acted_this_turn:
@@ -798,20 +992,42 @@ class Game:
         self.clear_highlighted_tiles(); self.clear_highlighted_attack_tiles()
 
     def execute_command(self, command):
-        cs = False;
-        if hasattr(command, 'unit') and command.unit: u = command.unit;
-        if u.is_alive():
-            if command.execute(): self.command_history.append(command);cs = True
-        elif command:
-            if command.execute(): cs = True
-        if cs:
-            self.game_map.units = [x for x in self.game_map.units if x.is_alive()];
-            if self.selected_unit and (
-                    not self.selected_unit.is_alive() or self.selected_unit.current_state_name != SelectedState.__name__ or (
-                    hasattr(self.selected_unit, 'has_acted_this_turn') and self.selected_unit.has_acted_this_turn)):
-                self.clear_all_highlights();
-                self.selected_unit = None;
+        command_successful = False
+        acting_unit = None  # Eylemi yapan birimi saklamak için
+
+        if command:  # Önce komutun varlığını kontrol et
+            if hasattr(command, 'unit') and command.unit:
+                acting_unit = command.unit  # Birimi al
+                if acting_unit.is_alive():
+                    if command.execute():  # Asıl eylemi gerçekleştir
+                        self.command_history.append(command)
+                        command_successful = True
+                        # Birimin eylem yaptığını işaretleme artık SelectedState içinde yapılıyor
+                        # acting_unit.has_acted_this_turn = True
+                else:
+                    print(
+                        f"Command cannot be executed: Unit {acting_unit.id} (Player {acting_unit.player_id}) is dead (checked before execute).")
+            elif hasattr(command, 'execute'):  # Birimsiz genel bir komutsa (ileride eklenebilir)
+                if command.execute():
+                    command_successful = True
+            else:
+                print(f"Warning: Command has no 'unit' attribute or 'execute' method: {command}")
+
+        if command_successful:
+            # Ölü birimleri haritadan ve ana listeden temizle
+            self.game_map.units = [unit_obj for unit_obj in self.game_map.units if unit_obj.is_alive()]
+
+            # Seçili birimin durumunu kontrol et ve gerekirse seçimi kaldır/durumu güncelle
+            if self.selected_unit:
+                s_unit = self.selected_unit
+                # Eğer seçili birim öldüyse VEYA seçili birim eylemini yaptıysa VEYA artık SelectedState'te değilse
+                if not s_unit.is_alive() or \
+                        (hasattr(s_unit, 'has_acted_this_turn') and s_unit.has_acted_this_turn) or \
+                        s_unit.current_state_name != SelectedState.__name__:
+                    self.clear_all_highlights()
+                    self.selected_unit = None
             return True
+
         return False
 
     def handle_gameplay_events(self, event):
@@ -851,38 +1067,49 @@ class Game:
                                                                                      (255, 255, 255));r = s.get_rect(
                 center=(self.screen_width // 2, self.screen_height // 2));self.screen.blit(s, r);pygame.display.flip()
             return
-        self.screen.fill((30, 30, 30));
-        self.game_map.draw(self.screen)
-        for t, c in [(self.highlighted_tiles_for_move, (0, 255, 0, 80)),
-                     (self.highlighted_tiles_for_attack, (255, 0, 0, 80))]:
-            for tile in t: s = pygame.Surface((self.tile_size, self.tile_size), pygame.SRCALPHA);s.fill(
-                c);self.screen.blit(s, (tile.pixel_x, tile.pixel_y))
-        tc = (0, 0, 0);
-        lts = f"Lvl:{self.current_level_number} | Turn: P{self.current_player_id}({'Human' if self.current_player_id == PLAYER_HUMAN_ID else 'AI'})"
+        self.screen.fill(self.active_theme.get("gameplay_bg", (30, 30, 30)));
+        if self.game_map: self.game_map.draw(self.screen, self.active_theme)  # Temayı harita çizimine de yolla
+
+        for tile_list, color_key in [(self.highlighted_tiles_for_move, "highlight_move"),
+                                     (self.highlighted_tiles_for_attack, "highlight_attack")]:
+            highlight_color = self.active_theme.get(color_key, (0, 255, 0, 80) if color_key == "highlight_move" else (
+            255, 0, 0, 80))
+            for tile in tile_list:
+                highlight_surf = pygame.Surface((self.tile_size, self.tile_size), pygame.SRCALPHA);
+                highlight_surf.fill(highlight_color)
+                self.screen.blit(highlight_surf, (tile.pixel_x, tile.pixel_y))
+
+        text_color = self.active_theme.get("gameplay_info_text_color", (0, 0, 0))
+        level_turn_text_str = f"Lvl:{self.current_level_number} | Turn: P{self.current_player_id}({'Human' if self.current_player_id == PLAYER_HUMAN_ID else 'AI'})"
         if self.game_over_flag:
             cf = self.feedback_message
             if "CONGRATULATIONS" in cf:
                 lts = "YOU WIN THE GAME!"
             elif "CLEARED" in cf:
                 lts = f"LEVEL {self.current_level_number - 1 if self.current_level_number > MAX_LEVELS else self.current_level_number} CLEARED!"
-            elif "FAILED" in cf or "AI Wins" in cf:
+            elif "FAILED" in cf or "Wins" in cf:
                 lts = f"GAME OVER - Lvl {self.current_level_number}"
             elif "Draw" in cf:
                 lts = f"GAME OVER - Lvl {self.current_level_number}(Draw)"
             else:
                 lts = f"GAME OVER - Lvl {self.current_level_number}"
-        lts_s = self.font_medium.render(lts, True, tc);
-        self.screen.blit(lts_s, (10, 10))
+            level_turn_text_str = lts  # Oyun sonu mesajını ana bilgi satırına taşıyalım
+
+        level_turn_surface = self.font_medium.render(level_turn_text_str, True, text_color);
+        self.screen.blit(level_turn_surface, (10, 10))
         cts = "'E'End|'K'Save|'U'Undo|'ESC'Menu";
-        cts_s = self.font_small.render(cts, True, tc);
+        cts_s = self.font_small.render(cts, True, text_color);
         r = cts_s.get_rect(bottomright=(self.screen_width - 10, self.screen_height - 10));
         self.screen.blit(cts_s, r)
-        if self.feedback_message_timer > 0 and self.feedback_message:
-            fs = self.font_medium.render(self.feedback_message, True, (255, 200, 0));
+
+        if self.feedback_message_timer > 0 and self.feedback_message and not (
+                self.game_over_flag and level_turn_text_str == self.feedback_message):  # Oyun sonu mesajı zaten yukarıda gösteriliyorsa tekrar gösterme
+            fs = self.font_medium.render(self.feedback_message, True,
+                                         self.active_theme.get("feedback_text_color", (255, 200, 0)));
             bgr = fs.get_rect(center=(self.screen_width // 2, self.screen_height - 30));
             bgr.inflate_ip(20, 10)
             bgs = pygame.Surface(bgr.size, pygame.SRCALPHA);
-            bgs.fill((20, 20, 20, 200));
+            bgs.fill(self.active_theme.get("feedback_bg_color", (20, 20, 20, 200)));
             self.screen.blit(bgs, bgr.topleft);
             self.screen.blit(fs, fs.get_rect(center=bgr.center))
         pygame.display.flip()
@@ -905,19 +1132,20 @@ class Game:
         ai_a = any(u.is_alive() for u in self.game_map.units if u.player_id == PLAYER_AI_ID)
         gom = "";
         lc = False
-        if not ai_a and hu_a:
-            gom = f"LVL {self.current_level_number} CLEARED!";lc = True
-        elif not hu_a and ai_a:
-            gom = f"LVL {self.current_level_number} FAILED! AI Wins!";self.game_over_flag = True
-        elif not hu_a and not ai_a:
-            gom = f"LVL {self.current_level_number} FAILED! Draw!";self.game_over_flag = True
+        if hasattr(self, 'game_map') and self.game_map:  # game_map var mı kontrol et
+            if not ai_a and hu_a:
+                gom = f"LEVEL {self.current_level_number} CLEARED!";lc = True
+            elif not hu_a and ai_a:
+                gom = f"LEVEL {self.current_level_number} FAILED! AI Wins!";self.game_over_flag = True
+            elif not hu_a and not ai_a:
+                gom = f"LEVEL {self.current_level_number} FAILED! Draw!";self.game_over_flag = True
         if gom:
             print(gom);
             self.show_feedback_message(gom, 180)
             if lc:
                 nl = self.current_level_number + 1
                 if nl > MAX_LEVELS:
-                    self.show_feedback_message("CONGRATS! All levels beat!", 9999);self.game_over_flag = True
+                    self.show_feedback_message("CONGRATULATIONS! You beat all levels!", 9999);self.game_over_flag = True
                 else:
                     pygame.display.flip();time.sleep(2);
                 if not self._initialize_game_for_level(nl, is_new_game_session=False): self.game_over_flag = True
