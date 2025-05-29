@@ -1,5 +1,6 @@
 {
     "current_player_id": 1,
+    "current_level_number": 1,
     "map_data": {
         "rows": 10,
         "cols": 15,
@@ -782,42 +783,60 @@
             "id": 0,
             "unit_type": "Piyade",
             "player_id": 1,
-            "grid_x": 6,
-            "grid_y": 6,
-            "health": 120,
-            "max_health": 120,
-            "attack_power": 35,
+            "grid_x": 5,
+            "grid_y": 2,
+            "health": 100,
+            "max_health": 100,
+            "attack_power": 30,
             "movement_range": 3,
             "attack_range": 1,
-            "current_state_name": "IdleState"
+            "current_state_name": "IdleState",
+            "has_acted_this_turn": false
         },
         {
             "id": 1,
             "unit_type": "Piyade",
-            "player_id": 2,
-            "grid_x": 9,
-            "grid_y": 7,
-            "health": 120,
-            "max_health": 120,
-            "attack_power": 35,
+            "player_id": 1,
+            "grid_x": 4,
+            "grid_y": 8,
+            "health": 100,
+            "max_health": 100,
+            "attack_power": 30,
             "movement_range": 3,
             "attack_range": 1,
-            "current_state_name": "IdleState"
+            "current_state_name": "IdleState",
+            "has_acted_this_turn": false
         },
         {
             "id": 2,
             "unit_type": "Piyade",
             "player_id": 2,
-            "grid_x": 11,
-            "grid_y": 6,
-            "health": 120,
-            "max_health": 120,
-            "attack_power": 35,
+            "grid_x": 10,
+            "grid_y": 2,
+            "health": 100,
+            "max_health": 100,
+            "attack_power": 30,
             "movement_range": 3,
             "attack_range": 1,
-            "current_state_name": "IdleState"
+            "current_state_name": "IdleState",
+            "has_acted_this_turn": true
+        },
+        {
+            "id": 3,
+            "unit_type": "Piyade",
+            "player_id": 2,
+            "grid_x": 10,
+            "grid_y": 4,
+            "health": 100,
+            "max_health": 100,
+            "attack_power": 30,
+            "movement_range": 3,
+            "attack_range": 1,
+            "current_state_name": "IdleState",
+            "has_acted_this_turn": true
         }
     ],
-    "next_unit_id": 3,
-    "game_over_flag": false
+    "next_unit_id": 4,
+    "game_over_flag": false,
+    "ai_turn_processed_this_round": true
 }
