@@ -840,5 +840,6 @@
     "next_unit_id": 4,
     "game_over_flag": false,
     "ai_turn_processed_this_round": true,
-    "active_theme_name": "default"
+    "active_theme_name": "dark_knight",
+    "turns_taken_this_level": 0
 }

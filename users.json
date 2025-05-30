@@ -15,6 +15,9 @@
     },
     "haktan3": {
         "password": "haktan3",
-        "theme": "default"
+        "theme": "dark_knight",
+        "scores": {
+            "level1": 4940
+        }
     }
 }
