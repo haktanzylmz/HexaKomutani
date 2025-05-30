@@ -1,5 +1,5 @@
 {
-    "user": "haktan2",
+    "user": "haktan3",
     "current_player_id": 1,
     "current_level_number": 1,
     "map_data": {
@@ -784,7 +784,7 @@
             "id": 0,
             "unit_type": "Piyade",
             "player_id": 1,
-            "grid_x": 7,
+            "grid_x": 2,
             "grid_y": 2,
             "health": 100,
             "max_health": 100,
@@ -798,8 +798,8 @@
             "id": 1,
             "unit_type": "Piyade",
             "player_id": 1,
-            "grid_x": 7,
-            "grid_y": 5,
+            "grid_x": 2,
+            "grid_y": 4,
             "health": 100,
             "max_health": 100,
             "attack_power": 30,
@@ -812,7 +812,7 @@
             "id": 2,
             "unit_type": "Piyade",
             "player_id": 2,
-            "grid_x": 10,
+            "grid_x": 12,
             "grid_y": 2,
             "health": 100,
             "max_health": 100,
@@ -820,13 +820,13 @@
             "movement_range": 3,
             "attack_range": 1,
             "current_state_name": "IdleState",
-            "has_acted_this_turn": true
+            "has_acted_this_turn": false
         },
         {
             "id": 3,
             "unit_type": "Piyade",
             "player_id": 2,
-            "grid_x": 10,
+            "grid_x": 12,
             "grid_y": 4,
             "health": 100,
             "max_health": 100,
@@ -834,11 +834,11 @@
             "movement_range": 3,
             "attack_range": 1,
             "current_state_name": "IdleState",
-            "has_acted_this_turn": true
+            "has_acted_this_turn": false
         }
     ],
     "next_unit_id": 4,
     "game_over_flag": false,
     "ai_turn_processed_this_round": true,
-    "active_theme_name": "forest_guardian"
+    "active_theme_name": "default"
 }

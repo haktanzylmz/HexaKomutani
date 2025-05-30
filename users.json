@@ -1,10 +1,14 @@
 {
     "haktan1": {
         "password": "haktan1",
-        "theme": "default"
+        "theme": "dark_knight"
     },
     "haktan2": {
         "password": "haktan2",
+        "theme": "forest_guardian"
+    },
+    "haktan3": {
+        "password": "haktan3",
         "theme": "default"
     }
 }
