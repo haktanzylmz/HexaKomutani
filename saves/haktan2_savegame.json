@@ -1,7 +1,7 @@
 {
     "user": "haktan2",
     "current_player_id": 1,
-    "current_level_number": 1,
+    "current_level_number": 2,
     "map_data": {
         "rows": 10,
         "cols": 15,
@@ -781,9 +781,23 @@
     },
     "units_data": [
         {
-            "id": 0,
+            "id": 4,
             "unit_type": "Piyade",
             "player_id": 1,
+            "grid_x": 1,
+            "grid_y": 5,
+            "health": 100,
+            "max_health": 100,
+            "attack_power": 30,
+            "movement_range": 3,
+            "attack_range": 1,
+            "current_state_name": "IdleState",
+            "has_acted_this_turn": false
+        },
+        {
+            "id": 5,
+            "unit_type": "Piyade",
+            "player_id": 2,
             "grid_x": 7,
             "grid_y": 2,
             "health": 100,
@@ -795,9 +809,9 @@
             "has_acted_this_turn": false
         },
         {
-            "id": 1,
+            "id": 6,
             "unit_type": "Piyade",
-            "player_id": 1,
+            "player_id": 2,
             "grid_x": 7,
             "grid_y": 5,
             "health": 100,
@@ -809,36 +823,23 @@
             "has_acted_this_turn": false
         },
         {
-            "id": 2,
+            "id": 7,
             "unit_type": "Piyade",
             "player_id": 2,
-            "grid_x": 10,
-            "grid_y": 2,
+            "grid_x": 7,
+            "grid_y": 8,
             "health": 100,
             "max_health": 100,
             "attack_power": 30,
             "movement_range": 3,
             "attack_range": 1,
             "current_state_name": "IdleState",
-            "has_acted_this_turn": true
-        },
-        {
-            "id": 3,
-            "unit_type": "Piyade",
-            "player_id": 2,
-            "grid_x": 10,
-            "grid_y": 4,
-            "health": 100,
-            "max_health": 100,
-            "attack_power": 30,
-            "movement_range": 3,
-            "attack_range": 1,
-            "current_state_name": "IdleState",
-            "has_acted_this_turn": true
+            "has_acted_this_turn": false
         }
     ],
-    "next_unit_id": 4,
+    "next_unit_id": 8,
     "game_over_flag": false,
-    "ai_turn_processed_this_round": true,
-    "active_theme_name": "forest_guardian"
+    "ai_turn_processed_this_round": false,
+    "active_theme_name": "forest_guardian",
+    "turns_taken_this_level": 0
 }

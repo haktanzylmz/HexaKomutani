@@ -1,11 +1,17 @@
 {
     "haktan1": {
         "password": "haktan1",
-        "theme": "dark_knight"
+        "theme": "dark_knight",
+        "scores": {
+            "level1": 5200
+        }
     },
     "haktan2": {
         "password": "haktan2",
-        "theme": "forest_guardian"
+        "theme": "default",
+        "scores": {
+            "level1": 5200
+        }
     },
     "haktan3": {
         "password": "haktan3",
