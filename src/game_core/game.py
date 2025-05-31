@@ -69,7 +69,7 @@ DEFAULT_THEME_COLORS = {
     "unit_human_topcu_color": (100, 100, 0),   # Sarımsı Topçu (İnsan)
     "unit_ai_topcu_color": (150, 150, 50),      # Koyu Sarı Topçu (AI)
     "unit_label_text_color": (255, 255, 255),   # Birim etiketleri için beyaz yazı (arka planları koyu olduğu için)
-
+    "ai_threat_range_color": (128, 0, 128, 70), # Yarı saydam Mor
 }
 
 DARK_KNIGHT_THEME_COLORS = {
@@ -99,6 +99,7 @@ DARK_KNIGHT_THEME_COLORS = {
     "unit_human_topcu_color": (80, 80, 0),      # Koyu Sarımsı Topçu (İnsan)
     "unit_ai_topcu_color": (100, 100, 40),      # Daha Koyu Sarı Topçu (AI)
     "unit_label_text_color": (200, 200, 200),   # Açık gri yazı
+    "ai_threat_range_color": (100, 0, 100, 70), # Koyu Mor
 }
 
 FOREST_GUARDIAN_THEME_COLORS = {
@@ -130,6 +131,7 @@ FOREST_GUARDIAN_THEME_COLORS = {
     "unit_human_topcu_color": (120, 120, 50),  # Haki Sarı Topçu (İnsan)
     "unit_ai_topcu_color": (140, 140, 70),  # Daha Koyu Haki Sarı Topçu (AI)
     "unit_label_text_color": (230, 230, 180),  # Krem rengi yazı
+    "ai_threat_range_color": (150, 50, 150, 70), # Açık Morumsu
 }
 
 ALL_THEMES = {  # Bu sözlük zaten vardı, içeriği yukarıdaki gibi olacak
@@ -200,6 +202,8 @@ class Game:
         self.map_rows = 0;
         self.current_player_id = PLAYER_HUMAN_ID;
         self.ai_turn_processed_this_round = False
+        self.ai_threat_tiles = set()  #  AI tarafından tehdit edilen (x,y) koordinatlarını tutacak set !!!
+        self.show_ai_threat_display = False  # Bu gösterimin aktif olup olmadığını tutan bayrak !!!
         self._ensure_data_dirs_exist();
         self.load_user_preferences()
 
@@ -1108,10 +1112,14 @@ class Game:
     def handle_gameplay_events(self, event):
         if self.game_over_flag:
             if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN: self.running = False; return
+
         if self.current_player_id == PLAYER_HUMAN_ID and not self.game_over_flag:
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1: self.handle_mouse_click(event.pos)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1: self.handle_mouse_click(event.pos)
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_u and self.current_player_id == PLAYER_HUMAN_ID and self.command_history and not self.game_over_flag:
+                # ... (undo kodu aynı) ...
                 lc = self.command_history.pop();
                 uu = None
                 if hasattr(lc, 'unit') and lc.unit: uu = lc.unit;uu.has_acted_this_turn = False;print(
@@ -1122,15 +1130,24 @@ class Game:
                 self.clear_all_highlights();
                 self.show_feedback_message(f"Action Undone{(f' for {uu.unit_type}' if uu else '')}",
                                            self.feedback_message_duration)
+
             if event.key == pygame.K_e and self.current_player_id == PLAYER_HUMAN_ID and not self.game_over_flag: self.end_turn()
             if event.key == pygame.K_k and not self.game_over_flag: self.save_game()
+
+            if event.key == pygame.K_r and self.current_player_id == PLAYER_HUMAN_ID and not self.game_over_flag:  # !!! YENİ: 'R' TUŞU İLE GÖSTER/GİZLE !!!
+                self.show_ai_threat_display = not self.show_ai_threat_display
+                if self.show_ai_threat_display:
+                    self._calculate_ai_threat_tiles()  # Açıksa yeniden hesapla (AI hareket etmiş olabilir)
+                    self.show_feedback_message("AI Tehdit Alanı Gösteriliyor", self.feedback_message_duration // 2)
+                else:
+                    self.show_feedback_message("AI Tehdit Alanı Gizlendi", self.feedback_message_duration // 2)
+
             if event.key == pygame.K_ESCAPE and not self.game_over_flag:
                 self.show_feedback_message("Returning to Main Menu...", self.feedback_message_duration // 2)
                 if self.selected_unit: self.selected_unit.set_state(IdleState(self.selected_unit),
                                                                     self);self.selected_unit = None
                 self.clear_all_highlights();
                 self.current_game_state = GAME_STATE_MAIN_MENU
-
     def update_gameplay(self):
         if not self.game_over_flag and hasattr(self, 'game_map') and self.game_map:
             for unit in self.game_map.units:
@@ -1140,12 +1157,11 @@ class Game:
         if not self.initialized_successfully or not hasattr(self, 'game_map') or not self.game_map:
             # ... (hata çizimi aynı) ...
             return
-        self.screen.fill(self.active_theme.get("gameplay_bg", (30, 30, 30)));
 
-        # !!! Map.draw'a font_small parametresini yolla !!!
-        if self.game_map: self.game_map.draw(self.screen, self.active_theme, self.font_small)
+        self.screen.fill(self.active_theme.get("gameplay_bg", (30, 30, 30)))
+        if self.game_map: self.game_map.draw(self.screen, self.active_theme, self.font_small)  # font_small'u yolla
 
-        # ... (vurgulama ve diğer yazıların çizimi aynı kalacak) ...
+        # Hareket ve Saldırı menzili vurguları (öncekiyle aynı)
         move_highlight_color = self.active_theme.get("highlight_move", (0, 255, 0, 80))
         attack_highlight_color = self.active_theme.get("highlight_attack", (255, 0, 0, 80))
         for tile in self.highlighted_tiles_for_move:
@@ -1156,9 +1172,25 @@ class Game:
             highlight_surf = pygame.Surface((self.tile_size, self.tile_size), pygame.SRCALPHA);
             highlight_surf.fill(attack_highlight_color)
             self.screen.blit(highlight_surf, (tile.pixel_x, tile.pixel_y))
+
+        # !!! YENİ: AI Tehdit Alanını Çizdirme !!!
+        if self.show_ai_threat_display:
+            print(
+                f"DEBUG: render_gameplay - show_ai_threat_display: {self.show_ai_threat_display}, content of ai_threat_tiles: {self.ai_threat_tiles}")
+            ai_threat_color = self.active_theme.get("ai_threat_range_color", (128, 0, 128, 70))
+            if not self.ai_threat_tiles:  # Ekstra kontrol: Eğer set boşsa bir şey çizme
+                print("DEBUG: ai_threat_tiles is empty, nothing to draw for AI threat.")
+
+            for gx, gy in self.ai_threat_tiles:
+                tile = self.game_map.get_tile_at_grid_coords(gx, gy)
+                if tile:
+                    threat_surf = pygame.Surface((self.tile_size, self.tile_size), pygame.SRCALPHA)
+                    threat_surf.fill(ai_threat_color)
+                    self.screen.blit(threat_surf, (tile.pixel_x, tile.pixel_y))
+
         text_color = self.active_theme.get("gameplay_info_text_color", (230, 230, 230))
         level_turn_text_str = f"Lvl:{self.current_level_number} | Turn: P{self.current_player_id}({'Human' if self.current_player_id == PLAYER_HUMAN_ID else 'AI'}) | Turns: {self.turns_taken_this_level}"
-        if self.game_over_flag:  # ... (oyun sonu mesajı aynı) ...
+        if self.game_over_flag:  # ... (oyun sonu mesajı) ...
             cf = self.feedback_message;
             lts = level_turn_text_str
             if "CONGRATULATIONS" in cf:
@@ -1174,10 +1206,10 @@ class Game:
             level_turn_text_str = lts
         level_turn_surface = self.font_medium.render(level_turn_text_str, True, text_color);
         self.screen.blit(level_turn_surface, (10, 10))
-        cts = "'E'End|'K'Save|'U'Undo|'ESC'Menu";
+        cts = "'E'End|'K'Save|'U'Undo|'R'Threat|'ESC'Menu";
         cts_s = self.font_small.render(cts, True, text_color);
         r = cts_s.get_rect(bottomright=(self.screen_width - 10, self.screen_height - 10));
-        self.screen.blit(cts_s, r)
+        self.screen.blit(cts_s, r)  # 'R' Threat EKLENDİ
         if self.feedback_message_timer > 0 and self.feedback_message and not (
                 self.game_over_flag and level_turn_text_str == self.feedback_message):
             fs = self.font_medium.render(self.feedback_message, True,
@@ -1202,6 +1234,10 @@ class Game:
         self.current_player_id = np_id
         self.reset_unit_actions_for_player(self.current_player_id)
         if self.current_player_id == PLAYER_AI_ID: self.ai_turn_processed_this_round = False
+        elif self.current_player_id == PLAYER_HUMAN_ID:  # !!! İNSAN SIRASI BAŞLADIĞINDA !!!
+            self._calculate_ai_threat_tiles()  # AI tehdit alanını hesapla/güncelle
+            # self.show_ai_threat_display = True # İstersen her tur başında otomatik açılsın
+            # ya da oyuncu kendi tuşuyla açsın
         if not self.check_game_over(): self.show_feedback_message(f"P{self.current_player_id}'s Turn",
                                                                   self.feedback_message_duration)
 
@@ -1391,3 +1427,25 @@ class Game:
             aufc.handle_click(self, ct)
         elif ct and not self.selected_unit:
             self.clear_all_highlights()
+
+    def _calculate_ai_threat_tiles(self):
+        """Tüm AI birimlerinin potansiyel saldırı bölgelerini hesaplar."""
+        self.ai_threat_tiles.clear()
+        if not hasattr(self, 'game_map') or not self.game_map:
+            return
+
+        print("DEBUG: Calculating AI potential attack zone...")
+        any_zone_found = False
+        for unit in self.game_map.units:
+            if unit.player_id == PLAYER_AI_ID and unit.is_alive():
+                # Yeni metodu kullan: get_attack_zone_coordinates
+                zone_coords = unit.get_attack_zone_coordinates(self.game_map)
+                if zone_coords:
+                    any_zone_found = True
+                    print(
+                        f"DEBUG: AI Unit ID {unit.id} at ({unit.grid_x},{unit.grid_y}) can attack coords: {zone_coords}")
+                    self.ai_threat_tiles.update(zone_coords)  # Set'e koordinatları ekle
+
+        if not any_zone_found:
+            print("DEBUG: No AI units have any potential attack zones currently.")
+        print(f"DEBUG: Final calculated AI threat zone coordinates: {self.ai_threat_tiles}")

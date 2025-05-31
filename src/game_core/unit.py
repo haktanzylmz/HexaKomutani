@@ -146,6 +146,38 @@ class Unit:
                     in_range_attack_tiles.append(tile)
         return in_range_attack_tiles
 
+    def get_attack_zone_coordinates(self, game_map):
+        """
+        Birimin saldırı menzili içindeki TÜM geçerli karelerin
+        (x,y) koordinatlarını bir set olarak döndürür.
+        Üzerinde düşman olup olmadığına bakmaz.
+        """
+        attack_zone_coords = set()
+        if not self.is_alive():  # Eylem yapmış olması önemli değil, potansiyel menzili gösteriyoruz
+            return attack_zone_coords
+
+        for r_offset in range(-self.attack_range, self.attack_range + 1):
+            for c_offset in range(-self.attack_range, self.attack_range + 1):
+                if r_offset == 0 and c_offset == 0:  # Kendi hücresi
+                    continue
+
+                distance = abs(r_offset) + abs(c_offset)
+
+                # Minimum ve maksimum saldırı menzili içinde mi?
+                if not (self.min_attack_range <= distance <= self.attack_range):
+                    continue
+
+                check_x = self.grid_x + c_offset
+                check_y = self.grid_y + r_offset
+
+                # Harita sınırları içinde mi diye kontrol et
+                if 0 <= check_x < game_map.cols and 0 <= check_y < game_map.rows:
+                    # Bu kareye saldırılabilir (üzerinde ne olduğu önemli değil)
+                    # Engel kontrolü de eklenebilir (eğer tile'larda is_targetable_through gibi bir özellik olsaydı)
+                    attack_zone_coords.add((check_x, check_y))
+
+        return attack_zone_coords
+
     def take_damage(self, amount):
         self.health -= amount
         print(f"P{self.player_id} {self.unit_type}(ID:{self.id}) took {amount} dmg, HP:{self.health}")
