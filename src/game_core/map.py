@@ -59,18 +59,16 @@ class Map:
         if tile and tile.unit_on_tile == unit_to_remove: tile.remove_unit()
         print(f"Unit ID {unit_to_remove.id} ({unit_to_remove.unit_type}) removed from map.")
 
-    def draw(self, surface, active_theme):  # !!! active_theme parametresi eklendi !!!
-        # Önce harita hücrelerini çiz
+    def draw(self, surface, active_theme, font_small):  # !!! font_small parametresi eklendi !!!
         for row_idx in range(self.rows):
             for col_idx in range(self.cols):
                 tile = self.get_tile_at_grid_coords(col_idx, row_idx)
                 if tile:
-                    tile.draw(surface, active_theme)  # !!! Temayı tile.draw'a yolla !!!
+                    tile.draw(surface, active_theme)
 
-        # Sonra birimleri çiz
-        for unit in self.units:  # self.units listesi güncel olmalı
-            if unit.is_alive():  # Sadece canlı birimleri çiz
-                unit.draw(surface, active_theme)  # !!! Temayı unit.draw'a yolla !!!
+        for unit in self.units:
+            if unit.is_alive():
+                unit.draw(surface, active_theme, font_small)  # !!! font_small'u unit.draw'a yolla !!!
 
     def to_dict(self):  # (Bir öncekiyle aynı)
         return {"rows": self.rows, "cols": self.cols, "tile_size": self.tile_size,

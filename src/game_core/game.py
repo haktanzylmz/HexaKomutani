@@ -66,6 +66,10 @@ DEFAULT_THEME_COLORS = {
     "login_button_secondary_idle_color": (0, 80, 120), "login_button_secondary_hover_color": (0, 100, 150),
     "login_button_danger_idle_color": (120, 40, 40), "login_button_danger_hover_color": (150, 50, 50),
     "login_button_text_color": (255, 255, 255), "login_link_text_color": (200, 220, 255),
+    "unit_human_topcu_color": (100, 100, 0),   # Sarımsı Topçu (İnsan)
+    "unit_ai_topcu_color": (150, 150, 50),      # Koyu Sarı Topçu (AI)
+    "unit_label_text_color": (255, 255, 255),   # Birim etiketleri için beyaz yazı (arka planları koyu olduğu için)
+
 }
 
 DARK_KNIGHT_THEME_COLORS = {
@@ -92,6 +96,9 @@ DARK_KNIGHT_THEME_COLORS = {
     "login_button_secondary_hover_color": (0, 90, 130), "login_button_danger_idle_color": (100, 30, 30),
     "login_button_danger_hover_color": (130, 40, 40), "login_button_text_color": (230, 230, 230),
     "login_link_text_color": (180, 200, 230),
+    "unit_human_topcu_color": (80, 80, 0),      # Koyu Sarımsı Topçu (İnsan)
+    "unit_ai_topcu_color": (100, 100, 40),      # Daha Koyu Sarı Topçu (AI)
+    "unit_label_text_color": (200, 200, 200),   # Açık gri yazı
 }
 
 FOREST_GUARDIAN_THEME_COLORS = {
@@ -120,6 +127,9 @@ FOREST_GUARDIAN_THEME_COLORS = {
     "login_button_secondary_hover_color": (40, 110, 140), "login_button_danger_idle_color": (110, 60, 40),
     "login_button_danger_hover_color": (140, 70, 50), "login_button_text_color": (230, 240, 220),
     "login_link_text_color": (190, 210, 180),
+    "unit_human_topcu_color": (120, 120, 50),  # Haki Sarı Topçu (İnsan)
+    "unit_ai_topcu_color": (140, 140, 70),  # Daha Koyu Haki Sarı Topçu (AI)
+    "unit_label_text_color": (230, 230, 180),  # Krem rengi yazı
 }
 
 ALL_THEMES = {  # Bu sözlük zaten vardı, içeriği yukarıdaki gibi olacak
@@ -1128,12 +1138,14 @@ class Game:
 
     def render_gameplay(self):
         if not self.initialized_successfully or not hasattr(self, 'game_map') or not self.game_map:
-            if self.screen: self.screen.fill((50, 0, 0));s = self.font_medium.render("GAMEPLAY RENDER ERROR", True,
-                                                                                     (255, 255, 255));r = s.get_rect(
-                center=(self.screen_width // 2, self.screen_height // 2));self.screen.blit(s, r);pygame.display.flip()
+            # ... (hata çizimi aynı) ...
             return
         self.screen.fill(self.active_theme.get("gameplay_bg", (30, 30, 30)));
-        if self.game_map: self.game_map.draw(self.screen, self.active_theme)
+
+        # !!! Map.draw'a font_small parametresini yolla !!!
+        if self.game_map: self.game_map.draw(self.screen, self.active_theme, self.font_small)
+
+        # ... (vurgulama ve diğer yazıların çizimi aynı kalacak) ...
         move_highlight_color = self.active_theme.get("highlight_move", (0, 255, 0, 80))
         attack_highlight_color = self.active_theme.get("highlight_attack", (255, 0, 0, 80))
         for tile in self.highlighted_tiles_for_move:
@@ -1146,8 +1158,9 @@ class Game:
             self.screen.blit(highlight_surf, (tile.pixel_x, tile.pixel_y))
         text_color = self.active_theme.get("gameplay_info_text_color", (230, 230, 230))
         level_turn_text_str = f"Lvl:{self.current_level_number} | Turn: P{self.current_player_id}({'Human' if self.current_player_id == PLAYER_HUMAN_ID else 'AI'}) | Turns: {self.turns_taken_this_level}"
-        if self.game_over_flag:
-            cf = self.feedback_message
+        if self.game_over_flag:  # ... (oyun sonu mesajı aynı) ...
+            cf = self.feedback_message;
+            lts = level_turn_text_str
             if "CONGRATULATIONS" in cf:
                 lts = "YOU WIN THE GAME!"
             elif "CLEARED" in cf:

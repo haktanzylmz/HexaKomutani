@@ -1,14 +1,16 @@
 {
     "level_number": 1,
-    "level_name": "İlk Çarpışma (Tanklı)",
+    "level_name": "İlk Çarpışma (Topçulu)",
     "map_cols": 15,
     "map_rows": 10,
     "player_units": [
         {"type": "Piyade", "x": 2, "y": 2, "player_id": 1},
-        {"type": "Tank", "x": 2, "y": 4, "player_id": 1}
+        {"type": "Tank", "x": 2, "y": 4, "player_id": 1},
+        {"type": "Topcu", "x": 1, "y": 3, "player_id": 1}
     ],
     "ai_units": [
         {"type": "Piyade", "x": 12, "y": 2, "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"},
-        {"type": "Tank", "x": 12, "y": 4, "player_id": 2, "strategy_id": "DefensiveStrategy"}
+        {"type": "Tank", "x": 12, "y": 4, "player_id": 2, "strategy_id": "DefensiveStrategy"},
+        {"type": "Topcu", "x": 13, "y": 3, "player_id": 2, "strategy_id": "DefensiveStrategy"}
     ]
 }

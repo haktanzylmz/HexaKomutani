@@ -1,7 +1,7 @@
 {
     "haktan1": {
         "password": "haktan1",
-        "theme": "dark_knight",
+        "theme": "default",
         "scores": {
             "level1": 5200
         }
