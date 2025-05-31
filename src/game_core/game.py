@@ -1175,11 +1175,11 @@ class Game:
 
         # !!! YENİ: AI Tehdit Alanını Çizdirme !!!
         if self.show_ai_threat_display:
-            print(
-                f"DEBUG: render_gameplay - show_ai_threat_display: {self.show_ai_threat_display}, content of ai_threat_tiles: {self.ai_threat_tiles}")
+            #print(
+                #f"DEBUG: render_gameplay - show_ai_threat_display: {self.show_ai_threat_display}, content of ai_threat_tiles: {self.ai_threat_tiles}")
             ai_threat_color = self.active_theme.get("ai_threat_range_color", (128, 0, 128, 70))
-            if not self.ai_threat_tiles:  # Ekstra kontrol: Eğer set boşsa bir şey çizme
-                print("DEBUG: ai_threat_tiles is empty, nothing to draw for AI threat.")
+            #if not self.ai_threat_tiles:  # Ekstra kontrol: Eğer set boşsa bir şey çizme
+                #print("DEBUG: ai_threat_tiles is empty, nothing to draw for AI threat.")
 
             for gx, gy in self.ai_threat_tiles:
                 tile = self.game_map.get_tile_at_grid_coords(gx, gy)
@@ -1429,23 +1429,20 @@ class Game:
             self.clear_all_highlights()
 
     def _calculate_ai_threat_tiles(self):
-        """Tüm AI birimlerinin potansiyel saldırı bölgelerini hesaplar."""
         self.ai_threat_tiles.clear()
         if not hasattr(self, 'game_map') or not self.game_map:
             return
 
-        print("DEBUG: Calculating AI potential attack zone...")
+        # print("DEBUG: Calculating AI potential attack zone...") # YORUMA ALINDI veya SİLİNDİ
         any_zone_found = False
         for unit in self.game_map.units:
             if unit.player_id == PLAYER_AI_ID and unit.is_alive():
-                # Yeni metodu kullan: get_attack_zone_coordinates
                 zone_coords = unit.get_attack_zone_coordinates(self.game_map)
                 if zone_coords:
                     any_zone_found = True
-                    print(
-                        f"DEBUG: AI Unit ID {unit.id} at ({unit.grid_x},{unit.grid_y}) can attack coords: {zone_coords}")
-                    self.ai_threat_tiles.update(zone_coords)  # Set'e koordinatları ekle
+                    # print(f"DEBUG: AI Unit ID {unit.id} at ({unit.grid_x},{unit.grid_y}) can attack coords: {zone_coords}") # YORUMA ALINDI veya SİLİNDİ
+                    self.ai_threat_tiles.update(zone_coords)
 
-        if not any_zone_found:
-            print("DEBUG: No AI units have any potential attack zones currently.")
-        print(f"DEBUG: Final calculated AI threat zone coordinates: {self.ai_threat_tiles}")
+        # if not any_zone_found: # YORUMA ALINDI veya SİLİNDİ
+        # print("DEBUG: No AI units have any potential attack zones currently.") # YORUMA ALINDI veya SİLİNDİ
+        # print(f"DEBUG: Final calculated AI threat zone coordinates: {self.ai_threat_tiles}") # YORUMA ALINDI veya SİLİNDİ
