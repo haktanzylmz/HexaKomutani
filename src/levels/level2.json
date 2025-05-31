@@ -7,8 +7,8 @@
         {"type": "Piyade", "x": 1, "y": 5, "player_id": 1}
     ],
     "ai_units": [
-        {"type": "Piyade", "x": 7, "y": 2, "player_id": 2, "ai_strategy": "SimpleAggressiveStrategy"},
-        {"type": "Piyade", "x": 7, "y": 5, "player_id": 2, "ai_strategy": "SimpleAggressiveStrategy"},
-        {"type": "Piyade", "x": 7, "y": 8, "player_id": 2, "ai_strategy": "SimpleAggressiveStrategy"}
+        {"type": "Piyade", "x": 7, "y": 2, "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"},
+        {"type": "Piyade", "x": 7, "y": 5, "player_id": 2, "strategy_id": "DefensiveStrategy"},
+        {"type": "Piyade", "x": 7, "y": 8, "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"}
     ]
 }

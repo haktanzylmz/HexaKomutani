@@ -10,6 +10,8 @@ from .ai_strategy import SimpleAggressiveStrategy
 from .unit import Unit
 from .unit_states import IdleState, SelectedState
 from .constants import PLAYER_HUMAN_ID, PLAYER_AI_ID
+from .ai_strategy import SimpleAggressiveStrategy, DefensiveStrategy
+
 
 USERS_FILE_NAME_BASE = "users.json"
 BASE_SAVE_FILENAME = "savegame.json"
@@ -116,6 +118,12 @@ class Game:
         self.screen_width = screen_width;
         self.screen_height = screen_height
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height));
+        self.unit_factory = UnitFactory()
+        self.ai_strategies = {
+            "SimpleAggressiveStrategy": SimpleAggressiveStrategy(),
+            "DefensiveStrategy": DefensiveStrategy()  # !!! YENİ STRATEJİ EKLENDİ !!!
+        }
+        self.default_ai_strategy = self.ai_strategies["SimpleAggressiveStrategy"]
         pygame.display.set_caption("Hexa Komutanı")
         try:
             self.font_small = pygame.font.SysFont(None, 24); self.font_medium = pygame.font.SysFont(None,
@@ -140,8 +148,11 @@ class Game:
         self.turns_taken_this_level = 0
         self.tile_size = 40;
         self.initialized_successfully = False
-        self.unit_factory = UnitFactory();
-        self.ai_strategies = {"SimpleAggressiveStrategy": SimpleAggressiveStrategy()};
+        self.unit_factory = UnitFactory()
+        self.ai_strategies = {
+            "SimpleAggressiveStrategy": SimpleAggressiveStrategy(),
+            "DefensiveStrategy": DefensiveStrategy()
+        }
         self.default_ai_strategy = self.ai_strategies["SimpleAggressiveStrategy"]
         self.main_menu_buttons = {};
         self.login_screen_elements = {};
@@ -299,12 +310,26 @@ class Game:
 
     def setup_units_from_level_data(self, level_data):
         if "player_units" in level_data:
-            for ui in level_data["player_units"]: u = self.unit_factory.create_unit(ui["type"], ui["x"], ui["y"], ui[
-                "player_id"]);self.game_map.add_unit(u, u.grid_x, u.grid_y)
+            for unit_info in level_data["player_units"]:
+                unit = self.unit_factory.create_unit(unit_info["type"], unit_info["x"], unit_info["y"],
+                                                     unit_info["player_id"])
+                self.game_map.add_unit(unit, unit.grid_x, unit.grid_y)
         if "ai_units" in level_data:
-            for ui in level_data["ai_units"]: u = self.unit_factory.create_unit(ui["type"], ui["x"], ui["y"],
-                                                                                ui["player_id"]);self.game_map.add_unit(
-                u, u.grid_x, u.grid_y)
+            for unit_info in level_data["ai_units"]:
+                unit = self.unit_factory.create_unit(unit_info["type"], unit_info["x"], unit_info["y"],
+                                                     unit_info["player_id"])
+                if unit:
+                    if unit.player_id == PLAYER_AI_ID:
+                        # AI stratejisini ata
+                        strategy_id = unit_info.get("strategy_id",
+                                                    "SimpleAggressiveStrategy")  # Varsayılan olarak agresif
+                        unit.ai_strategy_instance = self.ai_strategies.get(strategy_id, self.default_ai_strategy)
+                        if not unit.ai_strategy_instance:  # Eğer strategy_id geçersizse varsayılana dön
+                            print(f"Warning: Unknown strategy_id '{strategy_id}' for AI unit. Using default.")
+                            unit.ai_strategy_instance = self.default_ai_strategy
+                        print(
+                            f"DEBUG: AI Unit ID {unit.id} (Player {unit.player_id}) created with strategy: {unit.ai_strategy_instance.__class__.__name__}")
+                    self.game_map.add_unit(unit, unit.grid_x, unit.grid_y)
 
     def show_feedback_message(self, message, duration_frames):
         self.feedback_message = message;
@@ -1288,27 +1313,40 @@ class Game:
             self.show_feedback_message("AI thinking...", self.feedback_message_duration // 2);
             pygame.display.flip();
             time.sleep(0.1)
-            auts = [u for u in self.game_map.units if
-                    u.player_id == PLAYER_AI_ID and u.is_alive() and not u.has_acted_this_turn]
-            if not auts: print("AI no units/all acted.");self.ai_turn_processed_this_round = True;self.end_turn();return
-            aatbat = False
-            for au in auts:
+            ai_units_to_act = [u for u in self.game_map.units if
+                               u.player_id == PLAYER_AI_ID and u.is_alive() and not u.has_acted_this_turn]
+            if not ai_units_to_act: print(
+                "AI no units/all acted.");self.ai_turn_processed_this_round = True;self.end_turn();return
+
+            any_action_taken_by_ai_this_turn = False
+            for ai_unit in ai_units_to_act:
                 if not self.running or self.game_over_flag: break
-                if not au.is_alive() or au.has_acted_this_turn: continue
+                if not ai_unit.is_alive() or ai_unit.has_acted_this_turn: continue
                 pygame.display.flip();
                 time.sleep(0.3)
-                ac = self.default_ai_strategy.choose_action(au, self)
-                if ac:
-                    self.show_feedback_message(f"AI:{ac.description}", self.feedback_message_duration)
-                    if self.execute_command(ac): au.has_acted_this_turn = True;aatbat = True
+
+                # !!! DEĞİŞİKLİK: Her birim kendi stratejisini kullanıyor !!!
+                strategy_to_use = ai_unit.ai_strategy_instance if ai_unit.ai_strategy_instance else self.default_ai_strategy
+                print(f"DEBUG: AI Unit ID {ai_unit.id} using strategy: {strategy_to_use.__class__.__name__}")
+                action_command = strategy_to_use.choose_action(ai_unit, self)
+
+                if action_command:
+                    self.show_feedback_message(f"AI: {action_command.description}", self.feedback_message_duration)
+                    if self.execute_command(
+                            action_command):  # execute_command artık birimin eylem yapıp yapmadığını kontrol ETMİYOR
+                        ai_unit.has_acted_this_turn = True  # AI birimi eylemini yaptı olarak işaretle
+                        any_action_taken_by_ai_this_turn = True
                     pygame.display.flip();
                     time.sleep(0.6)
-                else:
-                    au.has_acted_this_turn = True;print(
-                        f"AI Unit {au.id} (Player {au.player_id}) could not find a valid action.")
-            if not aatbat and auts: self.show_feedback_message("AI:No valid actions found.",
-                                                               self.feedback_message_duration)
-            self.ai_turn_processed_this_round = True;
+                else:  # Eylem bulamadıysa da o birim için eylem hakkı bitmiş sayılır.
+                    ai_unit.has_acted_this_turn = True
+                    print(
+                        f"AI Unit {ai_unit.id} (Player {ai_unit.player_id}) using {strategy_to_use.__class__.__name__} could not find/execute a valid action.")
+
+            if not any_action_taken_by_ai_this_turn and ai_units_to_act:
+                self.show_feedback_message("AI: No valid actions found this turn.", self.feedback_message_duration)
+
+            self.ai_turn_processed_this_round = True  # AI'nın bu tur için tüm birimleriyle işi bitti
             self.end_turn()
 
     def handle_mouse_click(self, mouse_pos):

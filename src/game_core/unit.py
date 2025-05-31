@@ -26,9 +26,12 @@ class Unit:
         self.attack_power = 10;
         self.attack_range = 1;
         self.movement_range = 0
+        from .unit_states import IdleState # Döngüsel importu önlemek için burada
         self.current_state_name = IdleState.__name__
         self.current_state = IdleState(self)
-        self.current_state.enter_state(game_instance=None)
+        if self.current_state:  # None değilse
+            self.current_state.enter_state(game_instance=None)
+
 
     def set_state(self, new_state_instance, game_instance=None):
         if self.current_state: self.current_state.exit_state(game_instance)
@@ -141,11 +144,15 @@ class Unit:
 
 class Piyade(Unit):
     def __init__(self, grid_x, grid_y, player_id):
-        # Renk ataması artık Unit.draw içinde temaya göre yapılacak.
-        # Buradaki color parametresi Unit.__init__ için bir varsayılan olarak kalabilir ama kullanılmayacak.
-        super().__init__(grid_x, grid_y, "Piyade", player_id, color=(0, 0, 0), size=30)  # Varsayılan renk önemsiz
-        self.max_health = 100;
+
+        # from .constants import PLAYER_HUMAN_ID # Bu satır unit.py'nin en başında olmalı
+        color = (50, 150, 50) if player_id == PLAYER_HUMAN_ID else (150, 50, 50)
+        super().__init__(grid_x, grid_y, "Piyade", player_id, color=color, size=30)
+
+        self.max_health = 100
         self.health = self.max_health
-        self.attack_power = 30;
-        self.movement_range = 3;
+        self.attack_power = 30
+        self.movement_range = 3
         self.attack_range = 1
+        # self.has_acted_this_turn zaten Unit.__init__ içinde False olarak ayarlanıyor.
+        # self.current_state ve self.current_state_name de Unit.__init__ içinde ayarlanıyor.
