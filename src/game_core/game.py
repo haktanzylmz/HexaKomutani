@@ -36,78 +36,97 @@ GAME_STATE_THEME_SELECTION = "theme_selection"
 GAME_STATE_SCOREBOARD = "scoreboard_screen"
 
 # --- TEMA TANIMLARI ---
-DEFAULT_THEME_COLORS = {"name": "Varsayılan", "id": "default", "background_main_menu": (40, 40, 60),
-                        "button_main_menu_idle": (70, 70, 90), "button_main_menu_hover": (90, 90, 110),
-                        "button_main_menu_border": (120, 120, 150), "text_main_menu_button": (220, 220, 255),
-                        "title_main_menu": (200, 200, 255), "feedback_text_color": (255, 200, 0),
-                        "feedback_bg_color": (20, 20, 20, 200), "user_message_loggedin": (180, 255, 180),
-                        "user_message_loggedout": (255, 180, 180), "tile_walkable_default_color": (200, 200, 200),
-                        "tile_obstacle_color": (50, 50, 50), "tile_border_color": (0, 0, 0),
-                        "unit_player_human_default_color": (50, 150, 50), "unit_player_ai_default_color": (200, 50, 50),
-                        "unit_selected_border_color": (255, 255, 0), "health_bar_bg": (150, 0, 0),
-                        "health_bar_fg": (0, 200, 0), "highlight_move": (0, 255, 0, 80),
-                        "highlight_attack": (255, 0, 0, 80), "gameplay_info_text_color": (230, 230, 230),
-                        "gameplay_bg": (30, 30, 30), "login_bg": (30, 30, 40), "login_title_color": (200, 220, 255),
-                        "login_label_color": (180, 180, 200), "login_input_bg_color": (50, 50, 70),
-                        "login_input_text_color": (220, 220, 255), "login_input_active_border_color": (100, 150, 255),
-                        "login_input_inactive_border_color": (80, 80, 100),
-                        "login_button_primary_idle_color": (0, 120, 40),
-                        "login_button_primary_hover_color": (0, 150, 50),
-                        "login_button_secondary_idle_color": (0, 80, 120),
-                        "login_button_secondary_hover_color": (0, 100, 150),
-                        "login_button_danger_idle_color": (120, 40, 40),
-                        "login_button_danger_hover_color": (150, 50, 50), "login_button_text_color": (255, 255, 255),
-                        "login_link_text_color": (200, 220, 255), }
-DARK_KNIGHT_THEME_COLORS = {"name": "Kara Şövalye", "id": "dark_knight", "background_main_menu": (10, 10, 20),
-                            "button_main_menu_idle": (30, 30, 50), "button_main_menu_hover": (50, 50, 70),
-                            "button_main_menu_border": (80, 80, 100), "text_main_menu_button": (180, 180, 200),
-                            "title_main_menu": (160, 160, 210), "feedback_text_color": (230, 180, 0),
-                            "feedback_bg_color": (5, 5, 10, 190), "user_message_loggedin": (150, 220, 150),
-                            "user_message_loggedout": (220, 150, 150), "tile_walkable_default_color": (70, 70, 80),
-                            "tile_obstacle_color": (20, 20, 25), "tile_border_color": (40, 40, 50),
-                            "unit_player_human_default_color": (30, 100, 30),
-                            "unit_player_ai_default_color": (160, 30, 30), "unit_selected_border_color": (200, 200, 0),
-                            "health_bar_bg": (100, 0, 0), "health_bar_fg": (0, 150, 0),
-                            "highlight_move": (0, 180, 0, 70), "highlight_attack": (180, 0, 0, 70),
-                            "gameplay_info_text_color": (210, 210, 210), "gameplay_bg": (10, 10, 15),
-                            "login_bg": (15, 15, 25), "login_title_color": (180, 200, 230),
-                            "login_label_color": (160, 160, 180), "login_input_bg_color": (30, 30, 50),
-                            "login_input_text_color": (200, 200, 220),
-                            "login_input_active_border_color": (80, 120, 200),
-                            "login_input_inactive_border_color": (60, 60, 80),
-                            "login_button_primary_idle_color": (0, 100, 30),
-                            "login_button_primary_hover_color": (0, 130, 40),
-                            "login_button_secondary_idle_color": (0, 70, 100),
-                            "login_button_secondary_hover_color": (0, 90, 130),
-                            "login_button_danger_idle_color": (100, 30, 30),
-                            "login_button_danger_hover_color": (130, 40, 40),
-                            "login_button_text_color": (230, 230, 230), "login_link_text_color": (180, 200, 230), }
-FOREST_GUARDIAN_THEME_COLORS = {"name": "Orman Muhafızı", "id": "forest_guardian", "background_main_menu": (30, 60, 40),
-                                "button_main_menu_idle": (50, 90, 60), "button_main_menu_hover": (70, 110, 80),
-                                "button_main_menu_border": (90, 130, 100), "text_main_menu_button": (210, 230, 200),
-                                "title_main_menu": (190, 220, 180), "feedback_text_color": (255, 220, 100),
-                                "feedback_bg_color": (20, 40, 30, 200), "user_message_loggedin": (190, 240, 190),
-                                "user_message_loggedout": (240, 190, 190),
-                                "tile_walkable_default_color": (100, 150, 90), "tile_obstacle_color": (40, 70, 50),
-                                "tile_border_color": (20, 50, 30), "unit_player_human_default_color": (60, 160, 70),
-                                "unit_player_ai_default_color": (180, 80, 50),
-                                "unit_selected_border_color": (230, 230, 50), "health_bar_bg": (130, 50, 30),
-                                "health_bar_fg": (80, 180, 60), "highlight_move": (50, 255, 50, 80),
-                                "highlight_attack": (255, 80, 30, 80), "gameplay_info_text_color": (210, 220, 200),
-                                "gameplay_bg": (20, 50, 30), "login_bg": (20, 50, 30),
-                                "login_title_color": (180, 210, 170), "login_label_color": (170, 200, 160),
-                                "login_input_bg_color": (40, 70, 50), "login_input_text_color": (210, 230, 200),
-                                "login_input_active_border_color": (80, 180, 100),
-                                "login_input_inactive_border_color": (60, 100, 70),
-                                "login_button_primary_idle_color": (30, 110, 50),
-                                "login_button_primary_hover_color": (40, 140, 60),
-                                "login_button_secondary_idle_color": (30, 90, 110),
-                                "login_button_secondary_hover_color": (40, 110, 140),
-                                "login_button_danger_idle_color": (110, 60, 40),
-                                "login_button_danger_hover_color": (140, 70, 50),
-                                "login_button_text_color": (230, 240, 220), "login_link_text_color": (190, 210, 180), }
-ALL_THEMES = {"default": DEFAULT_THEME_COLORS, "dark_knight": DARK_KNIGHT_THEME_COLORS,
-              "forest_guardian": FOREST_GUARDIAN_THEME_COLORS}
+DEFAULT_THEME_COLORS = {
+    "name": "Varsayılan", "id": "default",
+    # ... (diğer anahtar-değerler aynı kalacak) ...
+    "background_main_menu": (40, 40, 60), "button_main_menu_idle": (70, 70, 90),
+    "button_main_menu_hover": (90, 90, 110), "button_main_menu_border": (120, 120, 150),
+    "text_main_menu_button": (220, 220, 255), "title_main_menu": (200, 200, 255),
+    "feedback_text_color": (255, 200, 0), "feedback_bg_color": (20, 20, 20, 200),
+    "user_message_loggedin": (180, 255, 180), "user_message_loggedout": (255, 180, 180),
+    "tile_walkable_default_color": (200, 200, 200), "tile_obstacle_color": (50, 50, 50),
+    "tile_border_color": (0, 0, 0),
+
+    # !!! BİRİM RENKLERİ GÜNCELLENDİ !!!
+    "unit_human_piyade_color": (50, 150, 50),  # Yeşil Piyade
+    "unit_human_tank_color": (70, 100, 180),  # Mavimsi Tank
+    "unit_ai_piyade_color": (200, 50, 50),  # Kırmızı Piyade
+    "unit_ai_tank_color": (180, 70, 70),  # Koyu Kırmızı Tank
+
+    "unit_selected_border_color": (255, 255, 0),
+    "health_bar_bg": (150, 0, 0), "health_bar_fg": (0, 200, 0),
+    "highlight_move": (0, 255, 0, 80), "highlight_attack": (255, 0, 0, 80),
+    "gameplay_info_text_color": (230, 230, 230),
+    "gameplay_bg": (30, 30, 30),
+    # ... (login ekranı renkleri aynı kalacak) ...
+    "login_bg": (30, 30, 40), "login_title_color": (200, 220, 255), "login_label_color": (180, 180, 200),
+    "login_input_bg_color": (50, 50, 70), "login_input_text_color": (220, 220, 255),
+    "login_input_active_border_color": (100, 150, 255), "login_input_inactive_border_color": (80, 80, 100),
+    "login_button_primary_idle_color": (0, 120, 40), "login_button_primary_hover_color": (0, 150, 50),
+    "login_button_secondary_idle_color": (0, 80, 120), "login_button_secondary_hover_color": (0, 100, 150),
+    "login_button_danger_idle_color": (120, 40, 40), "login_button_danger_hover_color": (150, 50, 50),
+    "login_button_text_color": (255, 255, 255), "login_link_text_color": (200, 220, 255),
+}
+
+DARK_KNIGHT_THEME_COLORS = {
+    "name": "Kara Şövalye", "id": "dark_knight",
+    # ... (diğer anahtar-değerler aynı kalacak) ...
+    "background_main_menu": (10, 10, 20), "button_main_menu_idle": (30, 30, 50), "button_main_menu_hover": (50, 50, 70),
+    "button_main_menu_border": (80, 80, 100), "text_main_menu_button": (180, 180, 200),
+    "title_main_menu": (160, 160, 210), "feedback_text_color": (230, 180, 0), "feedback_bg_color": (5, 5, 10, 190),
+    "user_message_loggedin": (150, 220, 150), "user_message_loggedout": (220, 150, 150),
+    "tile_walkable_default_color": (70, 70, 80), "tile_obstacle_color": (20, 20, 25), "tile_border_color": (40, 40, 50),
+
+    "unit_human_piyade_color": (30, 100, 30),  # Koyu Yeşil Piyade
+    "unit_human_tank_color": (50, 70, 120),  # Koyu Mavi Tank
+    "unit_ai_piyade_color": (160, 30, 30),  # Koyu Kırmızı Piyade
+    "unit_ai_tank_color": (120, 50, 50),  # Daha Koyu Kırmızı Tank
+
+    "unit_selected_border_color": (200, 200, 0), "health_bar_bg": (100, 0, 0), "health_bar_fg": (0, 150, 0),
+    "highlight_move": (0, 180, 0, 70), "highlight_attack": (180, 0, 0, 70), "gameplay_info_text_color": (210, 210, 210),
+    "gameplay_bg": (10, 10, 15), "login_bg": (15, 15, 25), "login_title_color": (180, 200, 230),
+    "login_label_color": (160, 160, 180), "login_input_bg_color": (30, 30, 50),
+    "login_input_text_color": (200, 200, 220), "login_input_active_border_color": (80, 120, 200),
+    "login_input_inactive_border_color": (60, 60, 80), "login_button_primary_idle_color": (0, 100, 30),
+    "login_button_primary_hover_color": (0, 130, 40), "login_button_secondary_idle_color": (0, 70, 100),
+    "login_button_secondary_hover_color": (0, 90, 130), "login_button_danger_idle_color": (100, 30, 30),
+    "login_button_danger_hover_color": (130, 40, 40), "login_button_text_color": (230, 230, 230),
+    "login_link_text_color": (180, 200, 230),
+}
+
+FOREST_GUARDIAN_THEME_COLORS = {
+    "name": "Orman Muhafızı", "id": "forest_guardian",
+    # ... (diğer anahtar-değerler aynı kalacak) ...
+    "background_main_menu": (30, 60, 40), "button_main_menu_idle": (50, 90, 60),
+    "button_main_menu_hover": (70, 110, 80), "button_main_menu_border": (90, 130, 100),
+    "text_main_menu_button": (210, 230, 200), "title_main_menu": (190, 220, 180),
+    "feedback_text_color": (255, 220, 100), "feedback_bg_color": (20, 40, 30, 200),
+    "user_message_loggedin": (190, 240, 190), "user_message_loggedout": (240, 190, 190),
+    "tile_walkable_default_color": (100, 150, 90), "tile_obstacle_color": (40, 70, 50),
+    "tile_border_color": (20, 50, 30),
+
+    "unit_human_piyade_color": (60, 160, 70),  # Orman Yeşili Piyade
+    "unit_human_tank_color": (70, 120, 80),  # Haki Tank
+    "unit_ai_piyade_color": (180, 80, 50),  # Turuncumsu Kırmızı Piyade
+    "unit_ai_tank_color": (150, 60, 40),  # Koyu Turuncu Tank
+
+    "unit_selected_border_color": (230, 230, 50), "health_bar_bg": (130, 50, 30), "health_bar_fg": (80, 180, 60),
+    "highlight_move": (50, 255, 50, 80), "highlight_attack": (255, 80, 30, 80),
+    "gameplay_info_text_color": (210, 220, 200), "gameplay_bg": (20, 50, 30), "login_bg": (20, 50, 30),
+    "login_title_color": (180, 210, 170), "login_label_color": (170, 200, 160), "login_input_bg_color": (40, 70, 50),
+    "login_input_text_color": (210, 230, 200), "login_input_active_border_color": (80, 180, 100),
+    "login_input_inactive_border_color": (60, 100, 70), "login_button_primary_idle_color": (30, 110, 50),
+    "login_button_primary_hover_color": (40, 140, 60), "login_button_secondary_idle_color": (30, 90, 110),
+    "login_button_secondary_hover_color": (40, 110, 140), "login_button_danger_idle_color": (110, 60, 40),
+    "login_button_danger_hover_color": (140, 70, 50), "login_button_text_color": (230, 240, 220),
+    "login_link_text_color": (190, 210, 180),
+}
+
+ALL_THEMES = {  # Bu sözlük zaten vardı, içeriği yukarıdaki gibi olacak
+    "default": DEFAULT_THEME_COLORS,
+    "dark_knight": DARK_KNIGHT_THEME_COLORS,
+    "forest_guardian": FOREST_GUARDIAN_THEME_COLORS
+}
 
 
 # --- TEMA TANIMLARI SONU ---

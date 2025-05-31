@@ -51,17 +51,21 @@ class Unit:
         self.pixel_y = pixel_y + offset
         self.rect = pygame.Rect(self.pixel_x, self.pixel_y, self.size, self.size)
 
-    def draw(self, surface, active_theme):  # !!! active_theme parametresi eklendi !!!
-        if not self.is_alive() or not self.rect:  # rect None ise çizme
+    def draw(self, surface, active_theme):
+        if not self.is_alive() or not self.rect:
             return
 
-        # Birim rengini temadan al
-        if self.player_id == PLAYER_HUMAN_ID:
-            unit_base_color = active_theme.get("unit_player_human_default_color", (50, 150, 50))
-        elif self.player_id == PLAYER_AI_ID:
-            unit_base_color = active_theme.get("unit_player_ai_default_color", (200, 50, 50))
-        else:  # Tanımsız oyuncu ID'si için varsayılan
-            unit_base_color = self.base_color
+        player_type_str = "human" if self.player_id == PLAYER_HUMAN_ID else "ai"
+        unit_type_str = self.unit_type.lower()  # "Piyade" -> "piyade", "Tank" -> "tank"
+
+        # Temadan birime özel renk anahtarını oluştur: örn. "unit_human_piyade_color"
+        color_key = f"unit_{player_type_str}_{unit_type_str}_color"
+
+        # Eğer birime özel renk yoksa, oyuncuya özel genel rengi al, o da yoksa varsayılanı al
+        default_player_color_key = f"unit_player_{player_type_str}_default_color"
+        fallback_color = (128, 128, 128)  # Genel bir varsayılan renk
+
+        unit_base_color = active_theme.get(color_key, active_theme.get(default_player_color_key, fallback_color))
 
         current_draw_color = unit_base_color
         if self.has_acted_this_turn:
@@ -72,7 +76,6 @@ class Unit:
 
         pygame.draw.rect(surface, current_draw_color, self.rect)
 
-        # Can barı renklerini temadan al
         health_bar_bg_color = active_theme.get("health_bar_bg", (150, 0, 0))
         health_bar_fg_color = active_theme.get("health_bar_fg", (0, 200, 0))
         health_bar_selected_border_color = active_theme.get("unit_selected_border_color", (255, 255, 0))
@@ -147,12 +150,32 @@ class Piyade(Unit):
 
         # from .constants import PLAYER_HUMAN_ID # Bu satır unit.py'nin en başında olmalı
         color = (50, 150, 50) if player_id == PLAYER_HUMAN_ID else (150, 50, 50)
-        super().__init__(grid_x, grid_y, "Piyade", player_id, color=color, size=30)
-
+        super().__init__(grid_x, grid_y, "Piyade", player_id, color=color, size=28)
         self.max_health = 100
         self.health = self.max_health
         self.attack_power = 30
         self.movement_range = 3
         self.attack_range = 1
+        # self.has_acted_this_turn zaten Unit.__init__ içinde False olarak ayarlanıyor.
+        # self.current_state ve self.current_state_name de Unit.__init__ içinde ayarlanıyor.
+
+
+class Tank(Unit):
+    def __init__(self, grid_x, grid_y, player_id):
+        # Tank için farklı bir varsayılan renk (temadan da üzerine yazılabilir)
+        # PLAYER_HUMAN_ID, unit.py'nin en başında constants.py'dan import edilmiş olmalı.
+        color = (100, 100, 120) if player_id == PLAYER_HUMAN_ID else (120, 100, 100)
+
+        # Tank'a özel daha büyük bir boyut (isteğe bağlı)
+        unit_size = 34
+
+        super().__init__(grid_x, grid_y, "Tank", player_id, color=color, size=unit_size)
+
+        # Tank'a özel nitelikler
+        self.max_health = 180  # Piyade'den (100) daha fazla can
+        self.health = self.max_health
+        self.attack_power = 45  # Piyade'den (30) daha fazla saldırı gücü
+        self.movement_range = 2  # Piyade'den (3) daha az hareket menzili
+        self.attack_range = 1  # Piyade gibi yakın dövüş (veya 2 yapıp uzak menzilli top olabilir)
         # self.has_acted_this_turn zaten Unit.__init__ içinde False olarak ayarlanıyor.
         # self.current_state ve self.current_state_name de Unit.__init__ içinde ayarlanıyor.
