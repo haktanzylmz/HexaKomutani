@@ -1,14 +1,13 @@
 {
-    "level_number": 2,
-    "level_name": "Pusu",
-    "map_cols": 15,
-    "map_rows": 10,
-    "player_units": [
-        {"type": "Piyade", "x": 1, "y": 5, "player_id": 1}
-    ],
-    "ai_units": [
-        {"type": "Piyade", "x": 7, "y": 2, "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"},
-        {"type": "Piyade", "x": 7, "y": 5, "player_id": 2, "strategy_id": "DefensiveStrategy"},
-        {"type": "Piyade", "x": 7, "y": 8, "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"}
-    ]
+  "level_name": "İlk Çatışma",
+  "max_turns": 25,
+  "player_units": [
+    {"type": "Piyade", "grid_pos": [3, 2], "player_id": 1},
+    {"type": "Piyade", "grid_pos": [3, 6], "player_id": 1},
+    {"type": "Tank", "grid_pos": [2, 4], "player_id": 1}
+  ],
+  "ai_units": [
+    {"type": "Piyade", "grid_pos": [11, 3], "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"},
+    {"type": "Piyade", "grid_pos": [11, 5], "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"}
+  ]
 }

@@ -25,7 +25,7 @@ LEVEL_FILE_PREFIX = os.path.join(LEVELS_DIR, "level")
 SAVES_DIR = os.path.join(PROJECT_ROOT_DIR, "saves")
 USERS_FILE_NAME = os.path.join(PROJECT_ROOT_DIR, USERS_FILE_NAME_BASE)
 
-MAX_LEVELS = 2
+MAX_LEVELS = 5
 STATE_NAME_TO_CLASS_MAP = {"IdleState": IdleState, "SelectedState": SelectedState}
 
 GAME_STATE_MAIN_MENU = "main_menu"
@@ -344,25 +344,48 @@ class Game:
     def setup_units_from_level_data(self, level_data):
         if "player_units" in level_data:
             for unit_info in level_data["player_units"]:
-                unit = self.unit_factory.create_unit(unit_info["type"], unit_info["x"], unit_info["y"],
-                                                     unit_info["player_id"])
-                self.game_map.add_unit(unit, unit.grid_x, unit.grid_y)
+                # JSON'dan "grid_pos" listesini oku
+                grid_x = unit_info["grid_pos"][0]
+                grid_y = unit_info["grid_pos"][1]
+                player_id = unit_info["player_id"]
+                unit_type = unit_info["type"]
+
+                unit = self.unit_factory.create_unit(
+                    unit_type,
+                    grid_x,
+                    grid_y,
+                    player_id
+                )
+                if unit:  # Birim başarıyla oluşturulduysa haritaya ekle
+                    self.game_map.add_unit(unit, unit.grid_x, unit.grid_y)
+                else:
+                    print(f"Error: Could not create player unit from info: {unit_info}")
+
         if "ai_units" in level_data:
             for unit_info in level_data["ai_units"]:
-                unit = self.unit_factory.create_unit(unit_info["type"], unit_info["x"], unit_info["y"],
-                                                     unit_info["player_id"])
+                # JSON'dan "grid_pos" listesini oku
+                grid_x = unit_info["grid_pos"][0]
+                grid_y = unit_info["grid_pos"][1]
+                player_id = unit_info["player_id"]
+                unit_type = unit_info["type"]
+
+                unit = self.unit_factory.create_unit(
+                    unit_type,
+                    grid_x,
+                    grid_y,
+                    player_id
+                )
                 if unit:
-                    if unit.player_id == PLAYER_AI_ID:
-                        # AI stratejisini ata
-                        strategy_id = unit_info.get("strategy_id",
-                                                    "SimpleAggressiveStrategy")  # Varsayılan olarak agresif
+                    if unit.player_id == PLAYER_AI_ID:  # Sadece AI birimleri için strateji ata
+                        strategy_id = unit_info.get("strategy_id", "SimpleAggressiveStrategy")  # Varsayılan strateji
                         unit.ai_strategy_instance = self.ai_strategies.get(strategy_id, self.default_ai_strategy)
-                        if not unit.ai_strategy_instance:  # Eğer strategy_id geçersizse varsayılana dön
+                        if not unit.ai_strategy_instance:
                             print(f"Warning: Unknown strategy_id '{strategy_id}' for AI unit. Using default.")
                             unit.ai_strategy_instance = self.default_ai_strategy
-                        print(
-                            f"DEBUG: AI Unit ID {unit.id} (Player {unit.player_id}) created with strategy: {unit.ai_strategy_instance.__class__.__name__}")
+                        # print(f"DEBUG: AI Unit ID {unit.id} (Player {unit.player_id}) created with strategy: {unit.ai_strategy_instance.__class__.__name__}") # Bu log zaten var
                     self.game_map.add_unit(unit, unit.grid_x, unit.grid_y)
+                else:
+                    print(f"Error: Could not create AI unit from info: {unit_info}")
 
     def show_feedback_message(self, message, duration_frames):
         self.feedback_message = message;

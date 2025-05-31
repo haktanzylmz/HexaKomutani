@@ -87,13 +87,6 @@ class SimpleAggressiveStrategy(AIStrategy):
 
 
 class DefensiveStrategy(AIStrategy):
-    """
-    Savunmacı yapay zeka stratejisi.
-    - Saldırı menzilindeki düşmanlara öncelik verir (öldürülebilir veya canı az olan).
-    - Eğer canı kritik seviyedeyse (%40'ın altı) ve yakın tehdit varsa, en yakın düşmandan uzaklaşmaya çalışır.
-    - Diğer durumlarda pozisyonunu korur.
-    """
-
     def choose_action(self, ai_unit, game_instance):
         if not ai_unit.is_alive() or ai_unit.has_acted_this_turn:
             return None
@@ -101,10 +94,9 @@ class DefensiveStrategy(AIStrategy):
         game_map = game_instance.game_map
         enemy_units_in_map = [u for u in game_map.units if u.player_id == PLAYER_HUMAN_ID and u.is_alive()]
         if not enemy_units_in_map:
-            print(f"AI (ID:{ai_unit.id}) [Defensive] -> No enemies on map. Holding position.")
-            return None  # Düşman yoksa bir şey yapma
+            # print(f"AI (ID:{ai_unit.id}) [Defensive] -> No enemies on map. Holding position.") # Bu logu azaltabiliriz
+            return None
 
-        # 1. Saldırı Fırsatlarını Değerlendir
         attackable_tiles = ai_unit.get_tiles_in_attack_range(game_map)
         potential_targets = []
         if attackable_tiles:
@@ -112,57 +104,58 @@ class DefensiveStrategy(AIStrategy):
                 if tile_obj.unit_on_tile and tile_obj.unit_on_tile.is_alive():
                     potential_targets.append(tile_obj.unit_on_tile)
 
+        # Saldırı Öncelikleri
         if potential_targets:
             killable_targets = [t for t in potential_targets if t.health <= ai_unit.attack_power]
-            if killable_targets:  # Öncelik 1: Öldürülebilir hedef
+            if killable_targets:
                 best_target = min(killable_targets, key=lambda t: t.health)
                 print(
-                    f"AI (ID:{ai_unit.id}) [Defensive] -> ATTACK (Killable Target): {best_target.unit_type} (ID:{best_target.id})")
+                    f"AI (ID:{ai_unit.id}) [Defensive] -> ATTACK (Killable): {best_target.unit_type} (ID:{best_target.id})")
                 return AttackCommand(ai_unit, best_target, game_map)
 
-            # Öncelik 2: Eğer kendi canı %50'den fazlaysa, en düşük canlıya saldır
-            if ai_unit.health > ai_unit.max_health * 0.5:
-                best_target = min(potential_targets, key=lambda t: t.health)
+            # Eğer canı %50'den fazlaysa veya düşmanın canı AI'nın canından daha azsa, saldır
+            best_target_overall = min(potential_targets, key=lambda t: t.health)
+            if ai_unit.health > ai_unit.max_health * 0.5 or best_target_overall.health < ai_unit.health:
                 print(
-                    f"AI (ID:{ai_unit.id}) [Defensive] -> ATTACK (Lowest HP, Health >50%): {best_target.unit_type} (ID:{best_target.id})")
-                return AttackCommand(ai_unit, best_target, game_map)
-            else:
-                # Canı az ve öldürücü vuruş yapamıyor, saldırmadan önce geri çekilmeyi değerlendir.
-                print(f"AI (ID:{ai_unit.id}) [Defensive] -> Targets in range, but low health. Considering retreat.")
-                # Geri çekilme mantığı aşağıda ele alınacak. Eğer geri çekilemiyorsa saldırmayacak.
+                    f"AI (ID:{ai_unit.id}) [Defensive] -> ATTACK (Advantageous): {best_target_overall.unit_type} (ID:{best_target_overall.id})")
+                return AttackCommand(ai_unit, best_target_overall, game_map)
+            else:  # Canı az ve bariz avantaj yoksa, geri çekilmeyi düşün
+                print(
+                    f"AI (ID:{ai_unit.id}) [Defensive] -> Targets in range, but low health/no clear advantage. Considering retreat.")
 
-        # 2. Geri Çekilme Mantığı (Eğer canı azsa ve yakın tehdit varsa)
-        # Yakın tehdit: Saldırı menzilinde düşman olması VEYA çok yakınında düşman olması
-        is_threatened = bool(potential_targets)  # Saldırı menzilinde düşman varsa tehdit altında
-        if not is_threatened:  # Eğer saldırı menzilinde değilse, daha genel bir yakınlık kontrolü
-            closest_enemy = min(enemy_units_in_map,
-                                key=lambda e: abs(ai_unit.grid_x - e.grid_x) + abs(ai_unit.grid_y - e.grid_y))
-            distance_to_closest = abs(ai_unit.grid_x - closest_enemy.grid_x) + abs(
-                ai_unit.grid_y - closest_enemy.grid_y)
-            if distance_to_closest <= ai_unit.movement_range + 1:  # Eğer düşman 1-2 adımda ulaşabilecek kadar yakınsa
-                is_threatened = True
-
-        if ai_unit.health <= ai_unit.max_health * 0.4 and is_threatened:  # Canı %40'ın altındaysa ve tehdit varsa
-            print(f"AI (ID:{ai_unit.id}) [Defensive] -> Attempting to RETREAT (Low Health & Threatened).")
-
-            # En yakın düşmanı bul (geri çekilmek için referans)
+        # Geri Çekilme Mantığı (Eğer canı azsa veya saldıracak avantajlı hedef yoksa ve yakın tehdit varsa)
+        is_threatened_closely = False
+        closest_enemy_for_retreat = None
+        if enemy_units_in_map:
             closest_enemy_for_retreat = min(enemy_units_in_map, key=lambda e: abs(ai_unit.grid_x - e.grid_x) + abs(
                 ai_unit.grid_y - e.grid_y))
+            distance_to_closest = abs(ai_unit.grid_x - closest_enemy_for_retreat.grid_x) + abs(
+                ai_unit.grid_y - closest_enemy_for_retreat.grid_y)
+            # Tehdit, düşmanın bir sonraki turda saldırabileceği kadar yakın olması demek olabilir.
+            # Şimdilik, düşmanın hareket + saldırı menzili içinde olup olmadığımızı kabaca kontrol edelim.
+            # Ortalama bir düşman piyadesinin hareket+saldırı menzili 3+1=4 diyelim.
+            if distance_to_closest <= 4:  # Eğer düşman 4 kare veya daha yakınsa tehdit var sayalım
+                is_threatened_closely = True
 
-            possible_retreat_moves = []
+        # Sadece canı %60'ın altındaysa VE yakın tehdit varsa geri çekilmeyi ciddi düşün
+        if ai_unit.health <= ai_unit.max_health * 0.6 and is_threatened_closely:
+            print(
+                f"AI (ID:{ai_unit.id}) [Defensive] -> Attempting to RETREAT (Health: {ai_unit.health}, Threatened Closely).")
+
             valid_move_tiles = ai_unit.get_tiles_in_movement_range(game_map)
+            possible_retreat_moves = []
+            current_distance_from_closest = abs(ai_unit.grid_x - closest_enemy_for_retreat.grid_x) + abs(
+                ai_unit.grid_y - closest_enemy_for_retreat.grid_y)
 
             for tile_obj in valid_move_tiles:
-                # Düşmandan uzaklaşan kareleri tercih et
-                current_distance = abs(ai_unit.grid_x - closest_enemy_for_retreat.grid_x) + abs(
-                    ai_unit.grid_y - closest_enemy_for_retreat.grid_y)
-                new_distance = abs(tile_obj.x_grid - closest_enemy_for_retreat.grid_x) + abs(
+                new_distance_from_closest = abs(tile_obj.x_grid - closest_enemy_for_retreat.grid_x) + abs(
                     tile_obj.y_grid - closest_enemy_for_retreat.grid_y)
-                if new_distance > current_distance:  # Uzaklaşıyorsa iyi bir aday
+                # Daha uzağa GİDEBİLİYORSA VE o kare başka bir düşmanın direkt saldırı menzilinde değilse
+                # (Bu ikinci kontrol şimdilik eklenmedi, karmaşıklığı artırır)
+                if new_distance_from_closest > current_distance_from_closest:
                     possible_retreat_moves.append(tile_obj)
 
             if possible_retreat_moves:
-                # En çok uzaklaştıranı seç (veya rastgele birini)
                 best_retreat_tile = max(possible_retreat_moves,
                                         key=lambda t: abs(t.x_grid - closest_enemy_for_retreat.grid_x) + abs(
                                             t.y_grid - closest_enemy_for_retreat.grid_y))
@@ -171,9 +164,9 @@ class DefensiveStrategy(AIStrategy):
                 return MoveUnitCommand(ai_unit, best_retreat_tile.x_grid, best_retreat_tile.y_grid, game_map)
             else:
                 print(
-                    f"AI (ID:{ai_unit.id}) [Defensive] -> Wanted to retreat but no safe tile found. Holding position.")
-                return None  # Kaçacak yer yoksa pozisyonunu koru
+                    f"AI (ID:{ai_unit.id}) [Defensive] -> Wanted to retreat but no better tile found. Holding position.")
+                return None  # Kaçacak daha iyi yer yoksa pozisyonunu koru
 
-        # 3. Diğer Durumlar: Pozisyonunu Koru
-        print(f"AI (ID:{ai_unit.id}) [Defensive] -> HOLDING POSITION (No high priority action).")
-        return None  # Başka bir eylem yoksa pozisyonunu koru
+        # Diğer tüm durumlarda (canı iyi, yakın tehdit yok veya saldıracak hedef yok vb.) pozisyonunu koru
+        print(f"AI (ID:{ai_unit.id}) [Defensive] -> HOLDING POSITION (Default defensive action).")
+        return None

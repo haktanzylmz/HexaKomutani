@@ -1,0 +1,18 @@
+{
+  "level_name": "Nihai Hesaplaşma",
+  "max_turns": 40,
+  "player_units": [
+    {"type": "Tank", "grid_pos": [2, 2], "player_id": 1},
+    {"type": "Tank", "grid_pos": [2, 6], "player_id": 1},
+    {"type": "Topcu", "grid_pos": [1, 4], "player_id": 1},
+    {"type": "Piyade", "grid_pos": [3, 4], "player_id": 1}
+  ],
+  "ai_units": [
+    {"type": "Tank", "grid_pos": [11, 2], "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"},
+    {"type": "Tank", "grid_pos": [13, 5], "player_id": 2, "strategy_id": "DefensiveStrategy"},
+    {"type": "Topcu", "grid_pos": [14, 0], "player_id": 2, "strategy_id": "DefensiveStrategy"},
+    {"type": "Topcu", "grid_pos": [14, 8], "player_id": 2, "strategy_id": "DefensiveStrategy"},
+    {"type": "Piyade", "grid_pos": [10, 0], "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"},
+    {"type": "Piyade", "grid_pos": [10, 8], "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"}
+  ]
+}

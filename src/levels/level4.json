@@ -1,0 +1,15 @@
+{
+  "level_name": "Kuşatma",
+  "max_turns": 35,
+  "player_units": [
+    {"type": "Tank", "grid_pos": [4, 4], "player_id": 1},
+    {"type": "Topcu", "grid_pos": [2, 2], "player_id": 1},
+    {"type": "Piyade", "grid_pos": [4, 1], "player_id": 1}
+  ],
+  "ai_units": [
+    {"type": "Tank", "grid_pos": [10, 4], "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"},
+    {"type": "Topcu", "grid_pos": [13, 1], "player_id": 2, "strategy_id": "DefensiveStrategy"},
+    {"type": "Piyade", "grid_pos": [12, 1], "player_id": 2, "strategy_id": "DefensiveStrategy"},
+    {"type": "Piyade", "grid_pos": [10, 7], "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"}
+  ]
+}

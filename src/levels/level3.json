@@ -1,0 +1,14 @@
+{
+  "level_name": "Menzil Avantajı",
+  "max_turns": 30,
+  "player_units": [
+    {"type": "Piyade", "grid_pos": [2, 2], "player_id": 1},
+    {"type": "Tank", "grid_pos": [3, 4], "player_id": 1},
+    {"type": "Topcu", "grid_pos": [1, 6], "player_id": 1}
+  ],
+  "ai_units": [
+    {"type": "Piyade", "grid_pos": [10, 2], "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"},
+    {"type": "Tank", "grid_pos": [12, 4], "player_id": 2, "strategy_id": "SimpleAggressiveStrategy"},
+    {"type": "Piyade", "grid_pos": [11, 6], "player_id": 2, "strategy_id": "DefensiveStrategy"}
+  ]
+}
